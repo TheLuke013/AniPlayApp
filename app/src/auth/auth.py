@@ -5,6 +5,7 @@ from passlib.context import CryptContext
 import jwt
 import datetime
 from loguru import logger
+import json
 
 class AuthSystem:
     def __init__(self):
@@ -13,7 +14,7 @@ class AuthSystem:
             deprecated="auto",
             sha256_crypt__default_rounds=30000
         )
-        self.secret_key = "sua-chave-super-secreta-aqui-mude-em-producao"
+        self.secret_key = "0132456789ABCDEF"
         self.setup_database()
         logger.info("✅ Sistema de auth inicializado com SHA256")
 
@@ -24,9 +25,6 @@ class AuthSystem:
         except Exception as e:
             logger.warning(f"bcrypt não disponível: {e}, usando sha256_crypt")
             self.pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
-        
-        self.secret_key = "sua-chave-super-secreta-aqui-mude-em-producao"
-        self.setup_database()
     
     def setup_database(self):
         db_path = self.get_app_data_path() / "users.db"
@@ -223,3 +221,91 @@ class AuthSystem:
             return False, "Token expirado"
         except jwt.InvalidTokenError:
             return False, "Token inválido"
+
+    def save_session(self, user_id, token):
+        try:
+            session_path = self.get_app_data_path() / "session.json"
+            session_data = {
+                'user_id': user_id,
+                'token': token,
+                'saved_at': datetime.datetime.now().isoformat()
+            }
+            
+            with open(session_path, 'w', encoding='utf-8') as f:
+                json.dump(session_data, f, ensure_ascii=False, indent=2)
+            
+            logger.info(f"✅ Sessão salva para usuário {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Erro ao salvar sessão: {e}")
+            return False
+
+    def load_session(self):
+        try:
+            session_path = self.get_app_data_path() / "session.json"
+            
+            if not session_path.exists():
+                logger.info("ℹ️ Nenhuma sessão encontrada")
+                return None
+            
+            with open(session_path, 'r', encoding='utf-8') as f:
+                session_data = json.load(f)
+            
+            token = session_data.get('token')
+            user_id = session_data.get('user_id')
+            
+            if not token or not user_id:
+                logger.warning("⚠️ Sessão corrompida ou incompleta")
+                self.clear_session()
+                return None
+            
+            # Verifica se o token ainda é válido
+            success, payload = self.verify_token(token)
+            if success:
+                logger.info(f"✅ Sessão carregada para usuário {payload.get('username', 'Unknown')}")
+                return payload
+            
+            logger.warning("⚠️ Token expirado ou inválido")
+            self.clear_session()
+            return None
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ Erro ao decodificar sessão (arquivo corrompido): {e}")
+            self.clear_session()
+            return None
+        except Exception as e:
+            logger.error(f"❌ Erro ao carregar sessão: {e}")
+            return None
+
+    def clear_session(self):
+        try:
+            session_path = self.get_app_data_path() / "session.json"
+            if session_path.exists():
+                session_path.unlink()
+                logger.info("✅ Sessão removida")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Erro ao limpar sessão: {e}")
+            return False
+
+    def get_user_info(self, user_id):
+        try:
+            db_path = self.get_app_data_path() / "users.db"
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute(
+                "SELECT username, email FROM users WHERE id = ?", 
+                (user_id,)
+            )
+            result = cursor.fetchone()
+            conn.close()
+            
+            if result:
+                username, email = result
+                return {'user_id': user_id, 'username': username, 'email': email}
+            return None
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao obter info do usuário: {e}")
+            return None

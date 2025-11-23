@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, 
                                QLineEdit, QLabel, QMessageBox, QStackedWidget, QFrame, QHBoxLayout)
 from PySide6.QtCore import Qt
+from loguru import logger
 
 from styles.dark_styles import get_dark_styles
 
@@ -279,3 +280,50 @@ class AuthWidget(QWidget):
             msg.setIcon(QMessageBox.Information)
         
         msg.exec()
+
+    def try_auto_login(self):
+        """Tenta fazer login automático com sessão salva"""
+        session = self.auth_system.load_session()
+        if session:
+            user_info = self.auth_system.get_user_info(session['user_id'])
+            if user_info:
+                self.username_input.setText(user_info['username'])
+                logger.info(f"⚡ Sessão encontrada para: {user_info['username']}")
+                
+                msg = QMessageBox()
+                msg.setWindowTitle("Sessão Salva")
+                msg.setText(f"Bem-vindo de volta, {user_info['username']}!\n\nDeseja fazer login automaticamente?")
+                msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                msg.setDefaultButton(QMessageBox.Yes)
+                
+                msg.setStyleSheet("""
+                    QMessageBox {
+                        background-color: #2d3748;
+                        color: #f7fafc;
+                        border: 2px solid #667eea;
+                        border-radius: 10px;
+                    }
+                    QMessageBox QLabel {
+                        color: #f7fafc;
+                        font-size: 14px;
+                    }
+                    QMessageBox QPushButton {
+                        background-color: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        padding: 8px 15px;
+                        min-width: 80px;
+                        margin: 5px;
+                    }
+                    QMessageBox QPushButton:hover {
+                        background-color: #5a6fd8;
+                    }
+                """)
+                
+                if msg.exec() == QMessageBox.Yes:
+                    self.password_input.setFocus()
+                    self.login_btn.setStyleSheet("background-color: #38a169;")
+                    self.login_btn.setText("⚡ Login Automático Disponível")
+                    return True
+        return False
