@@ -1,0 +1,15 @@
+2025-11-22 21:28:10.201 | INFO     | app:__init__:12 - AniPlay Application Started
+2025-11-22 21:39:22.884 | INFO     | app:__init__:15 - AniPlay Application Started
+2025-11-22 21:40:07.139 | INFO     | app:__init__:17 - AniPlay Application Started
+2025-11-22 21:40:07.140 | INFO     | app:init_aniwatch_api:28 - Inicializando Anime API...
+2025-11-22 21:40:07.141 | ERROR    | app:init_aniwatch_api:36 - Diretório não encontrado: C:\Development\AniPlayApp\app\aniwatch-api
+2025-11-22 21:40:33.544 | INFO     | app:__init__:17 - AniPlay Application Started
+2025-11-22 21:40:33.544 | INFO     | app:init_aniwatch_api:28 - Inicializando Anime API...
+2025-11-22 21:40:33.545 | INFO     | app:init_aniwatch_api:33 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-22 21:42:04.392 | INFO     | app:__init__:17 - AniPlay Application Started
+2025-11-22 21:42:04.392 | INFO     | app:init_aniwatch_api:28 - Inicializando Anime API...
+2025-11-22 21:42:04.393 | INFO     | app:init_aniwatch_api:33 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-22 21:49:33.443 | INFO     | app:__init__:18 - AniPlay Application Started
+2025-11-22 21:49:33.444 | INFO     | app:init_aniwatch_api:29 - Inicializando Anime API...
+2025-11-22 21:49:34.353 | INFO     | app:start_api:35 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-22 21:49:34.399 | INFO     | app:start_api:42 - ✅ Anime API iniciada em background

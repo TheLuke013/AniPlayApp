@@ -1,0 +1,3 @@
+[submodule "aniwatch-api"]
+	path = aniwatch-api
+	url = https://github.com/ghoshRitesh12/aniwatch-api.git
