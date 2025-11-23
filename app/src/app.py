@@ -15,6 +15,8 @@ import subprocess
 from pathlib import Path
 import threading
 import json
+import hashlib
+from pathlib import Path
 
 from auth.auth import AuthSystem
 from auth.auth_widget import AuthWidget
@@ -49,31 +51,129 @@ class AniPlayApp(QMainWindow):
 
         self.api_ready_signal.connect(self.on_api_ready)
 
+        self.cache_dir = self.get_cache_directory()
+    
+        # 🔥 CORREÇÃO: Limpar completamente os caches em memória
+        self.poster_cache = {}
+        self.pending_images = set()
+        
+        # 🔥 CORREÇÃO: Verificar e limpar cache corrompido na inicialização
+        self.clean_corrupted_cache()
+        
+        # Thread pool para carregamento de imagens
         self.thread_pool = QThreadPool()
-        self.thread_pool.setMaxThreadCount(3)  # Limita para 3 threads simultâneas
+        self.thread_pool.setMaxThreadCount(3)
         
         self.poster_cache = {}
         self.pending_images = set()
 
-    def load_anime_poster_async(self, anime_id, image_url, image_label):
-        """Carrega uma imagem de forma assíncrona usando ThreadPool"""
+        cache_size = self.get_cache_size()
+        cache_files_count = self.check_cache_files()
+        logger.info(f"💾 Cache local: {cache_size:.2f} MB, {cache_files_count} arquivos")
+
+    def clean_corrupted_cache(self):
+        """Remove arquivos de cache corrompidos na inicialização"""
+        try:
+            for cache_file in self.cache_dir.glob("*.*"):
+                if cache_file.is_file():
+                    # Tenta carregar como QPixmap para verificar integridade
+                    pixmap = QPixmap(str(cache_file))
+                    if pixmap.isNull():
+                        logger.warning(f"🗑️ Removendo cache corrompido: {cache_file.name}")
+                        cache_file.unlink()
+        except Exception as e:
+            logger.warning(f"❌ Erro ao limpar cache corrompido: {e}")
+
+    def check_cache_files(self):
+        """Verifica quantos arquivos de cache existem (para debug)"""
+        try:
+            cache_files = list(self.cache_dir.glob("*.*"))
+            logger.info(f"📁 Arquivos no cache: {len(cache_files)}")
+            
+            # Lista os primeiros 5 arquivos para debug
+            for i, file_path in enumerate(cache_files[:5]):
+                file_size = file_path.stat().st_size / 1024  # KB
+                logger.debug(f"  {i+1}. {file_path.name} ({file_size:.1f} KB)")
+                
+            return len(cache_files)
+        except Exception as e:
+            logger.error(f"❌ Erro ao verificar cache: {e}")
+            return 0
+
+    def get_cache_directory(self):
+        """Retorna o diretório de cache da aplicação (mesmo do banco de dados)"""
+        # Usa o mesmo diretório base do sistema de auth
+        app_data = self.auth_system.get_app_data_path()
+        cache_path = app_data / "cache" / "images"
         
-        # Verifica se já está no cache
+        try:
+            cache_path.mkdir(parents=True, exist_ok=True)
+            logger.debug(f"✅ Cache directory: {cache_path}")
+            return cache_path
+        except Exception as e:
+            logger.error(f"❌ Erro ao criar diretório de cache {cache_path}: {e}")
+            # Fallback para o diretório do app
+            fallback_path = app_data / "images_cache"
+            fallback_path.mkdir(parents=True, exist_ok=True)
+            return fallback_path
+
+    def clear_old_cache(self, days_old=30):
+        """Limpa cache antigo (opcional)"""
+        try:
+            current_time = datetime.datetime.now().timestamp()
+            for file_path in self.cache_dir.glob("*.*"):
+                if file_path.is_file():
+                    # Verifica se o arquivo é mais antigo que days_old
+                    file_age = current_time - file_path.stat().st_mtime
+                    if file_age > days_old * 24 * 60 * 60:  # Converter dias para segundos
+                        file_path.unlink()
+                        logger.debug(f"🗑️ Cache antigo removido: {file_path}")
+        except Exception as e:
+            logger.warning(f"❌ Erro ao limpar cache: {e}")
+
+    def get_cache_size(self):
+        """Retorna o tamanho total do cache em MB"""
+        try:
+            total_size = 0
+            for file_path in self.cache_dir.glob("*.*"):
+                if file_path.is_file():
+                    total_size += file_path.stat().st_size
+            return total_size / (1024 * 1024)  # Converter para MB
+        except Exception as e:
+            logger.warning(f"❌ Erro ao calcular tamanho do cache: {e}")
+            return 0
+
+    def load_anime_poster_async(self, anime_id, image_url, image_label):
+        anime_id = str(anime_id).strip()
+        
+        # Verifica se já está no cache de memória
         if anime_id in self.poster_cache:
+            logger.debug(f"✅ Imagem {anime_id} já em cache de memória")
             pixmap = self.poster_cache[anime_id]
             image_label.setPixmap(pixmap)
             image_label.setText("")
             return
         
-        # Se já está carregando, não inicia outro loader
+        # 🔥 CORREÇÃO: Verificar cache de disco de forma SÍNCRONA primeiro
+        cache_pixmap = self.load_from_cache_sync(anime_id, image_url)
+        if cache_pixmap:
+            logger.debug(f"💾 Cache SÍNCRONO encontrado: {anime_id}")
+            self.poster_cache[anime_id] = cache_pixmap
+            image_label.setPixmap(cache_pixmap)
+            image_label.setText("")
+            return
+        
+        # Se já está carregando, apenas retorna
         if anime_id in self.pending_images:
+            logger.debug(f"⏳ ID {anime_id} já está sendo carregado")
             return
         
         # Marca como carregando
         self.pending_images.add(anime_id)
+        logger.debug(f"🚀 Iniciando carregamento assíncrono: {anime_id}")
         
-        # Cria o worker
-        worker = ImageLoader(anime_id, image_url)
+        # Cria o worker apenas para download (não para cache)
+        worker = ImageLoader(anime_id, image_url, self.cache_dir)
         
         # Conecta os sinais
         worker.signals.image_loaded.connect(
@@ -86,8 +186,41 @@ class AniPlayApp(QMainWindow):
         # Inicia o worker no thread pool
         self.thread_pool.start(worker)
 
+    def load_from_cache_sync(self, anime_id, image_url):
+        """Verifica o cache de disco de forma síncrona"""
+        try:
+            # Recria a lógica do ImageLoader.get_cache_path()
+            extension = Path(image_url).suffix.lower()
+            if extension not in [".jpg", ".jpeg", ".png", ".webp"]:
+                extension = ".jpg"
+            
+            cache_path = self.cache_dir / f"{anime_id}{extension}"
+            
+            if cache_path.exists():
+                # Verifica se o arquivo tem tamanho válido
+                file_size = cache_path.stat().st_size
+                if file_size < 1024:
+                    cache_path.unlink()
+                    return None
+                    
+                pixmap = QPixmap(str(cache_path))
+                if not pixmap.isNull():
+                    scaled_pixmap = pixmap.scaled(200, 280, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+                    logger.debug(f"✅ Cache síncrono válido: {cache_path.name}")
+                    return scaled_pixmap
+                else:
+                    cache_path.unlink()
+        except Exception as e:
+            logger.warning(f"❌ Erro ao carregar cache síncrono: {e}")
+        
+        return None
+
     def on_poster_loaded(self, anime_id, pixmap, image_label):
         """Chamado quando uma imagem é carregada com sucesso"""
+        # 🔥 CORREÇÃO: Verificar se estamos na thread principal
+        from PySide6.QtCore import QThread
+        logger.debug(f"🎯 Thread atual: {QThread.currentThread()}")
+        
         # Remove da lista de pendentes
         if anime_id in self.pending_images:
             self.pending_images.remove(anime_id)
@@ -98,9 +231,13 @@ class AniPlayApp(QMainWindow):
         # Atualiza a UI
         image_label.setPixmap(pixmap)
         image_label.setText("")
+        
+        logger.debug(f"✅ Imagem {anime_id} carregada com sucesso")
 
     def on_poster_failed(self, anime_id, error, image_label):
         """Chamado quando falha ao carregar uma imagem"""
+        logger.debug(f"🎯 on_poster_failed chamado para: {anime_id}")
+        
         # Remove da lista de pendentes
         if anime_id in self.pending_images:
             self.pending_images.remove(anime_id)
@@ -113,6 +250,14 @@ class AniPlayApp(QMainWindow):
                 font-size: 12px;
             }
         """)
+    def retry_loading(self, anime_id, image_label):
+        """Tenta recarregar uma imagem que falhou"""
+        # Busca os dados do anime novamente (você precisará armazenar a URL)
+        if hasattr(self, 'current_anime_data'):
+            for anime in self.current_anime_data:
+                if str(anime["id"]) == anime_id:
+                    self.load_anime_poster_async(anime_id, anime.get("poster", ""), image_label)
+                    break
 
     def try_auto_login(self):
         try:
@@ -899,6 +1044,8 @@ class AniPlayApp(QMainWindow):
             self.on_api_ready()
   
     def on_api_ready(self):
+        self.pending_images.clear()
+
         home_animes_data = get_animes_home_page()
         trending_animes = home_animes_data["data"]["trendingAnimes"]
         popular_animes = home_animes_data["data"]["mostPopularAnimes"]
@@ -939,9 +1086,13 @@ class AniPlayApp(QMainWindow):
         self.home_layout.addWidget(recent_section)
 
     def closeEvent(self, event):
+        # Log do tamanho do cache ao fechar
+        cache_size = self.get_cache_size()
+        logger.info(f"💾 Cache final: {cache_size:.2f} MB")
+        
         # Limpa o thread pool
-        self.thread_pool.clear()  # Remove tarefas pendentes
-        self.thread_pool.waitForDone(3000)  # Espera até 3 segundos para tarefas ativas
+        self.thread_pool.clear()
+        self.thread_pool.waitForDone(3000)
         
         if self.user_db:
             self.user_db.close()
