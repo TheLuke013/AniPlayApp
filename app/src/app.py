@@ -2,10 +2,13 @@ import sqlite3
 from PySide6.QtWidgets import (QMainWindow, QStackedWidget, QWidget, QVBoxLayout,
                                 QLabel, QPushButton, QHBoxLayout, QMessageBox, QFrame,
                                 QLineEdit, QListWidget, QScrollArea, QDialog)
-from PySide6.QtCore import Qt, QTimer, Signal, Slot
+from PySide6.QtCore import Qt, QTimer, Signal, Slot, QThreadPool, QRunnable
+import concurrent.futures
+from PySide6.QtGui import QPixmap
 from loguru import logger
 import jwt
 import datetime
+import requests
 
 import sys
 import subprocess
@@ -15,8 +18,9 @@ import json
 
 from auth.auth import AuthSystem
 from auth.auth_widget import AuthWidget
-from anime.anime_data import get_anime_info, get_anime_home_page
+from anime.anime_data import get_animes_home_page, get_search_anime
 from api.server_monitor import ServerMonitor
+from image_loader import ImageLoader
 
 class AniPlayApp(QMainWindow):
     api_ready_signal = Signal(bool)
@@ -44,7 +48,71 @@ class AniPlayApp(QMainWindow):
         self.init_aniwatch_api()
 
         self.api_ready_signal.connect(self.on_api_ready)
-        self.api_ready_signal.connect(self.on_api_status_changed)
+
+        self.thread_pool = QThreadPool()
+        self.thread_pool.setMaxThreadCount(3)  # Limita para 3 threads simultâneas
+        
+        self.poster_cache = {}
+        self.pending_images = set()
+
+    def load_anime_poster_async(self, anime_id, image_url, image_label):
+        """Carrega uma imagem de forma assíncrona usando ThreadPool"""
+        
+        # Verifica se já está no cache
+        if anime_id in self.poster_cache:
+            pixmap = self.poster_cache[anime_id]
+            image_label.setPixmap(pixmap)
+            image_label.setText("")
+            return
+        
+        # Se já está carregando, não inicia outro loader
+        if anime_id in self.pending_images:
+            return
+        
+        # Marca como carregando
+        self.pending_images.add(anime_id)
+        
+        # Cria o worker
+        worker = ImageLoader(anime_id, image_url)
+        
+        # Conecta os sinais
+        worker.signals.image_loaded.connect(
+            lambda anime_id, pixmap: self.on_poster_loaded(anime_id, pixmap, image_label)
+        )
+        worker.signals.image_failed.connect(
+            lambda anime_id, error: self.on_poster_failed(anime_id, error, image_label)
+        )
+        
+        # Inicia o worker no thread pool
+        self.thread_pool.start(worker)
+
+    def on_poster_loaded(self, anime_id, pixmap, image_label):
+        """Chamado quando uma imagem é carregada com sucesso"""
+        # Remove da lista de pendentes
+        if anime_id in self.pending_images:
+            self.pending_images.remove(anime_id)
+        
+        # Salva no cache
+        self.poster_cache[anime_id] = pixmap
+        
+        # Atualiza a UI
+        image_label.setPixmap(pixmap)
+        image_label.setText("")
+
+    def on_poster_failed(self, anime_id, error, image_label):
+        """Chamado quando falha ao carregar uma imagem"""
+        # Remove da lista de pendentes
+        if anime_id in self.pending_images:
+            self.pending_images.remove(anime_id)
+        
+        logger.warning(f"❌ Falha ao carregar poster {anime_id}: {error}")
+        image_label.setText("🎬\nSem imagem")
+        image_label.setStyleSheet(image_label.styleSheet() + """
+            QLabel {
+                color: #666;
+                font-size: 12px;
+            }
+        """)
 
     def try_auto_login(self):
         try:
@@ -430,9 +498,116 @@ class AniPlayApp(QMainWindow):
         self.loading_dots = (self.loading_dots + 1) % 4
         self.loading_label.setText("Carregando" + "." * self.loading_dots)
 
+    def create_anime_card(self, anime):
+        card = QFrame()
+        card.setFixedSize(200, 350)
+        card.setStyleSheet("""
+            QFrame {
+                background: #2a2a2a;
+                border-radius: 10px;
+                border: none;
+            }
+            QFrame:hover {
+                background: #3a3a3a;
+            }
+        """)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        # Imagem do anime
+        image_label = QLabel()
+        image_label.setFixedSize(200, 280)
+        image_label.setStyleSheet("""
+            QLabel {
+                background: #3a3a3a;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                border: none;
+            }
+        """)
+        image_label.setAlignment(Qt.AlignCenter)
+        image_label.setScaledContents(False)  # IMPORTANTE: não escalar, pois já fazemos isso no loader
+        
+        # Texto placeholder enquanto a imagem carrega
+        image_label.setText("📺\nCarregando...")
+        image_label.setStyleSheet(image_label.styleSheet() + """
+            QLabel {
+                color: #888;
+                font-size: 12px;
+            }
+        """)
+
+        # Informações do anime
+        info_widget = QWidget()
+        info_widget.setStyleSheet("""
+            background: #2a2a2a; 
+            border-bottom-left-radius: 10px; 
+            border-bottom-right-radius: 10px;
+        """)
+        info_layout = QVBoxLayout()
+        info_layout.setContentsMargins(15, 15, 15, 15)
+        info_layout.setSpacing(5)
+
+        # Título
+        title = QLabel(anime["title"])
+        title.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                font-weight: bold;
+                color: #fff;
+                line-height: 1.3;
+            }
+        """)
+        title.setWordWrap(True)
+        title.setFixedHeight(40)
+
+        # Detalhes
+        details = QLabel(f"Rank: #{anime['score']}")
+        details.setStyleSheet("font-size: 12px; color: #ccc;")
+
+        # Status
+        status = QLabel("Popular")
+        status.setStyleSheet("""
+            QLabel {
+                background: #ff7b00;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 10px;
+                max-width: 80px;
+            }
+        """)
+
+        info_layout.addWidget(title)
+        info_layout.addWidget(details)
+        info_layout.addWidget(status)
+        info_widget.setLayout(info_layout)
+
+        layout.addWidget(image_label)
+        layout.addWidget(info_widget)
+        card.setLayout(layout)
+
+        # Iniciar carregamento assíncrono da imagem
+        poster_url = anime.get("poster", "")
+        if poster_url:
+            self.load_anime_poster_async(anime["id"], poster_url, image_label)
+        else:
+            image_label.setText("🎬\nSem imagem")
+            image_label.setStyleSheet(image_label.styleSheet() + """
+                QLabel {
+                    color: #666;
+                    font-size: 12px;
+                }
+            """)
+
+        return card
+
     def create_anime_section(self, title, animes):
         section = QWidget()
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 20)
 
         # Título da seção
         title_label = QLabel(title)
@@ -452,7 +627,7 @@ class AniPlayApp(QMainWindow):
         grid_layout.setSpacing(20)
         grid_layout.setContentsMargins(0, 0, 0, 0)
 
-        for anime in animes:
+        for anime in animes[:10]:  # Limita a 10 animes por seção
             card = self.create_anime_card(anime)
             grid_layout.addWidget(card)
 
@@ -488,85 +663,6 @@ class AniPlayApp(QMainWindow):
         layout.addWidget(scroll)
         section.setLayout(layout)
         return section
-
-    def create_anime_card(self, anime):
-        card = QFrame()
-        card.setFixedSize(200, 350)
-        card.setStyleSheet("""
-            QFrame {
-                background: #2a2a2a;
-                border-radius: 10px;
-                border: none;
-            }
-            QFrame:hover {
-                background: #3a3a3a;
-            }
-        """)
-
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-
-        # Imagem do anime (placeholder)
-        image_label = QLabel()
-        image_label.setFixedSize(200, 280)
-        image_label.setStyleSheet("""
-            QLabel {
-                background: #3a3a3a;
-                border-top-left-radius: 10px;
-                border-top-right-radius: 10px;
-                font-size: 40px;
-            }
-        """)
-        image_label.setAlignment(Qt.AlignCenter)
-        image_label.setText("🎬")
-
-        # Informações do anime
-        info_widget = QWidget()
-        info_widget.setStyleSheet("background: #2a2a2a;")
-        info_layout = QVBoxLayout()
-        info_layout.setContentsMargins(15, 15, 15, 15)
-
-        # Título
-        title = QLabel(anime["title"])
-        title.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                color: #fff;
-                line-height: 1.3;
-            }
-        """)
-        title.setWordWrap(True)
-        title.setFixedHeight(40)
-
-        # Detalhes
-        details = QLabel(f"Score: {anime['score']}")
-        details.setStyleSheet("font-size: 12px; color: #ccc;")
-
-        # Status
-        status = QLabel(anime["status"])
-        status.setStyleSheet("""
-            QLabel {
-                background: #00a8ff;
-                color: white;
-                padding: 2px 6px;
-                border-radius: 10px;
-                font-size: 10px;
-                max-width: 80px;
-            }
-        """)
-
-        info_layout.addWidget(title)
-        info_layout.addWidget(details)
-        info_layout.addWidget(status)
-        info_widget.setLayout(info_layout)
-
-        layout.addWidget(image_label)
-        layout.addWidget(info_widget)
-        card.setLayout(layout)
-
-        return card
 
     def create_search_tab(self):
         content = QWidget()
@@ -803,22 +899,50 @@ class AniPlayApp(QMainWindow):
             self.on_api_ready()
   
     def on_api_ready(self):
+        home_animes_data = get_animes_home_page()
+        trending_animes = home_animes_data["data"]["trendingAnimes"]
+        popular_animes = home_animes_data["data"]["mostPopularAnimes"]
+        recent_animes = home_animes_data["data"]["latestCompletedAnimes"]
+        
+        logger.info("✅ Dados dos animes obtidos com sucesso")
+
         # Para animação
         self.loading_timer.stop()
-
-        # Remove o loading
         self.loading_label.hide()
 
-        # Adiciona as seções reais
-        trending = self.create_anime_section("🔥 Em Alta Agora", [])
-        popular = self.create_anime_section("⭐ Clássicos Populares", [])
-        recent = self.create_anime_section("🆕 Lançamentos Recentes", [])
+        # Limpa o layout antes de adicionar novas seções
+        for i in reversed(range(self.home_layout.count())):
+            widget = self.home_layout.itemAt(i).widget()
+            if widget:
+                widget.setParent(None)
 
-        self.home_layout.addWidget(trending)
-        self.home_layout.addWidget(popular)
-        self.home_layout.addWidget(recent)
+        # Converte os dados para o formato esperado pelo create_anime_section
+        def convert_anime_data(anime_list):
+            converted = []
+            for anime in anime_list:
+                converted.append({
+                    "title": anime.get("name", "Sem título"),
+                    "score": str(anime.get("rank", "N/A")),
+                    "status": "Em andamento",  # Você pode ajustar isso conforme os dados reais
+                    "poster": anime.get("poster", ""),
+                    "id": anime.get("id", "")
+                })
+            return converted
+
+        # Adiciona as seções com dados reais
+        trending_section = self.create_anime_section("🔥 Em Alta Agora", convert_anime_data(trending_animes))
+        popular_section = self.create_anime_section("⭐ Clássicos Populares", convert_anime_data(popular_animes))
+        recent_section = self.create_anime_section("🆕 Lançamentos Recentes", convert_anime_data(recent_animes))
+
+        self.home_layout.addWidget(trending_section)
+        self.home_layout.addWidget(popular_section)
+        self.home_layout.addWidget(recent_section)
 
     def closeEvent(self, event):
+        # Limpa o thread pool
+        self.thread_pool.clear()  # Remove tarefas pendentes
+        self.thread_pool.waitForDone(3000)  # Espera até 3 segundos para tarefas ativas
+        
         if self.user_db:
             self.user_db.close()
         event.accept()
