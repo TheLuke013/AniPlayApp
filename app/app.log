@@ -1,10 +1,13 @@
-2025-11-22 23:28:57.979 | INFO     | app:__init__:24 - AniPlay iniciado
-2025-11-22 23:28:58.081 | INFO     | auth.auth:setup_database:46 - Banco de dados de usuários inicializado
-2025-11-22 23:28:58.090 | INFO     | auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
-2025-11-22 23:28:58.197 | WARNING  | auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
-2025-11-22 23:29:01.510 | INFO     | auth.auth:load_session:272 - ✅ Sessão carregada para usuário TheLuke013
-2025-11-22 23:29:01.511 | INFO     | app:try_auto_login:46 - 🎯 Tentando login automático para usuário ID: 1
-2025-11-22 23:29:01.550 | INFO     | app:on_login_success:79 - ⚡ Login automático bem-sucedido: TheLuke013
-2025-11-22 23:29:01.552 | INFO     | app:init_aniwatch_api:220 - Inicializando Anime API...
-2025-11-22 23:29:02.361 | INFO     | app:start_api:226 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-22 23:29:02.398 | INFO     | app:start_api:232 - Anime API iniciada em background
+2025-11-23 00:27:50.452 | INFO     | app:__init__:29 - AniPlay iniciado
+2025-11-23 00:27:50.504 | INFO     | auth.auth:setup_database:46 - Banco de dados de usuários inicializado
+2025-11-23 00:27:50.505 | INFO     | auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
+2025-11-23 00:27:50.635 | WARNING  | auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
+2025-11-23 00:27:51.531 | INFO     | auth.auth:load_session:248 - ℹ️ Nenhuma sessão encontrada
+2025-11-23 00:27:51.532 | INFO     | app:try_auto_login:58 - ℹ️ Nenhuma sessão válida encontrada para auto-login
+2025-11-23 00:27:51.532 | INFO     | app:init_aniwatch_api:677 - Inicializando Anime API...
+2025-11-23 00:27:52.114 | INFO     | app:start_api:683 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-23 00:27:52.122 | INFO     | app:start_api:689 - 🚀 Processo da API iniciado
+2025-11-23 00:27:56.289 | INFO     | api.server_monitor:check_server:26 - ⏳ Aguardando servidor... (1/30)
+2025-11-23 00:28:02.301 | INFO     | api.server_monitor:check_server:26 - ⏳ Aguardando servidor... (2/30)
+2025-11-23 00:28:04.328 | INFO     | api.server_monitor:check_server:19 - ✅ Servidor da API está pronto!
+2025-11-23 00:28:04.328 | INFO     | app:on_api_status_changed:703 - 🎉 API está pronta! Habilitando funcionalidades...
