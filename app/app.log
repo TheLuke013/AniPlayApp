@@ -1,13 +1,4 @@
-2025-11-23 00:27:50.452 | INFO     | app:__init__:29 - AniPlay iniciado
-2025-11-23 00:27:50.504 | INFO     | auth.auth:setup_database:46 - Banco de dados de usuários inicializado
-2025-11-23 00:27:50.505 | INFO     | auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
-2025-11-23 00:27:50.635 | WARNING  | auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
-2025-11-23 00:27:51.531 | INFO     | auth.auth:load_session:248 - ℹ️ Nenhuma sessão encontrada
-2025-11-23 00:27:51.532 | INFO     | app:try_auto_login:58 - ℹ️ Nenhuma sessão válida encontrada para auto-login
-2025-11-23 00:27:51.532 | INFO     | app:init_aniwatch_api:677 - Inicializando Anime API...
-2025-11-23 00:27:52.114 | INFO     | app:start_api:683 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-23 00:27:52.122 | INFO     | app:start_api:689 - 🚀 Processo da API iniciado
-2025-11-23 00:27:56.289 | INFO     | api.server_monitor:check_server:26 - ⏳ Aguardando servidor... (1/30)
-2025-11-23 00:28:02.301 | INFO     | api.server_monitor:check_server:26 - ⏳ Aguardando servidor... (2/30)
-2025-11-23 00:28:04.328 | INFO     | api.server_monitor:check_server:19 - ✅ Servidor da API está pronto!
-2025-11-23 00:28:04.328 | INFO     | app:on_api_status_changed:703 - 🎉 API está pronta! Habilitando funcionalidades...
+2025-11-23 00:59:52.572 | INFO     | app:__init__:29 - AniPlay iniciado
+2025-11-23 00:59:52.703 | INFO     | auth.auth:setup_database:46 - Banco de dados de usuários inicializado
+2025-11-23 00:59:52.704 | INFO     | auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
+2025-11-23 00:59:52.847 | WARNING  | auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt

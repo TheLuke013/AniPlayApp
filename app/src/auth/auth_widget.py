@@ -3,44 +3,104 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton,
 from PySide6.QtCore import Qt
 from loguru import logger
 
-from styles.dark_styles import get_dark_styles
-
 class AuthWidget(QWidget):
     def __init__(self, auth_system, on_login_success):
         super().__init__()
         self.auth_system = auth_system
         self.on_login_success = on_login_success
-        self.current_theme = "dark"
         self.init_ui()
     
     def init_ui(self):
         # Layout principal
         main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(50, 50, 50, 50)
-        main_layout.setAlignment(Qt.AlignCenter)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         
-        # Header com botão de tema
-        header_layout = QHBoxLayout()
-        
-        self.setStyleSheet(get_dark_styles())
-       
-        #container central
+        # Container principal com estilo escuro
         self.container = QFrame()
         self.container.setObjectName("auth_container")
         container_layout = QVBoxLayout()
         container_layout.setContentsMargins(40, 40, 40, 40)
         container_layout.setSpacing(20)
         
+        # Título do AniPlay (igual ao HTML)
+        title = QLabel("🎬 AniPlay")
+        title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("""
+            QLabel {
+                font-size: 36px;
+                margin-bottom: 20px;
+                color: #ff7b00;
+                font-weight: bold;
+            }
+        """)
+        container_layout.addWidget(title)
+        
+        # Abas de autenticação
+        auth_tabs = QWidget()
+        auth_tabs_layout = QHBoxLayout()
+        auth_tabs_layout.setSpacing(0)
+        auth_tabs_layout.setContentsMargins(0, 0, 0, 20)
+        
+        self.login_tab_btn = QPushButton("Entrar")
+        self.register_tab_btn = QPushButton("Cadastrar")
+        
+        # Estilização das abas
+        tab_style = """
+            QPushButton {
+                padding: 12px 24px;
+                border: none;
+                color: white;
+                background: transparent;
+                border-bottom: 2px solid transparent;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background: #3a3a3a;
+            }
+        """
+        
+        active_tab_style = """
+            QPushButton {
+                border-bottom: 2px solid #ff7b00;
+                color: #ff7b00;
+            }
+        """
+        
+        self.login_tab_btn.setStyleSheet(tab_style + active_tab_style)
+        self.register_tab_btn.setStyleSheet(tab_style)
+        
+        self.login_tab_btn.clicked.connect(self.show_login)
+        self.register_tab_btn.clicked.connect(self.show_register)
+        
+        auth_tabs_layout.addWidget(self.login_tab_btn)
+        auth_tabs_layout.addWidget(self.register_tab_btn)
+        auth_tabs_layout.addStretch()
+        
+        auth_tabs.setLayout(auth_tabs_layout)
+        container_layout.addWidget(auth_tabs)
+        
+        # Widget stack para login/registro
         self.stacked_layout = QStackedWidget()
         container_layout.addWidget(self.stacked_layout)
         
         self.container.setLayout(container_layout)
-        
-        main_layout.addLayout(header_layout)
         main_layout.addWidget(self.container)
         self.setLayout(main_layout)
         
-        #telas
+        # Aplicar estilo geral
+        self.setStyleSheet("""
+            QWidget {
+                background: #1a1a1a;
+                color: white;
+            }
+            QFrame#auth_container {
+                background: #2a2a2a;
+                border-radius: 10px;
+            }
+        """)
+        
+        # Telas de login e registro
         self.login_widget = self.create_login_widget()
         self.stacked_layout.addWidget(self.login_widget)
         
@@ -53,50 +113,95 @@ class AuthWidget(QWidget):
         widget = QWidget()
         layout = QVBoxLayout()
         layout.setSpacing(15)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(0, 0, 0, 0)
         
-        #título
-        title = QLabel("Bem-vindo ao AniPlay")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
-        
-        #subtítulo
-        subtitle = QLabel("Faça login para continuar")
-        subtitle.setObjectName("subtitle")
-        subtitle.setAlignment(Qt.AlignCenter)
-        layout.addWidget(subtitle)
-        
-        #campos de input
+        # Campos de input
         self.username_input = QLineEdit()
-        self.username_input.setPlaceholderText("📧 Usuário")
+        self.username_input.setPlaceholderText("Email ou Username:")
+        self.username_input.setStyleSheet("""
+            QLineEdit {
+                padding: 12px;
+                background: #3a3a3a;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #ff7b00;
+            }
+        """)
         self.username_input.setMinimumHeight(45)
         layout.addWidget(self.username_input)
         
         self.password_input = QLineEdit()
-        self.password_input.setPlaceholderText("🔒 Senha")
+        self.password_input.setPlaceholderText("Senha:")
         self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setStyleSheet("""
+            QLineEdit {
+                padding: 12px;
+                background: #3a3a3a;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #ff7b00;
+            }
+        """)
         self.password_input.setMinimumHeight(45)
         layout.addWidget(self.password_input)
         
-        #botão de login
-        self.login_btn = QPushButton("🎮 Entrar no AniPlay")
+        # Botão de login
+        self.login_btn = QPushButton("Entrar")
+        self.login_btn.setStyleSheet("""
+            QPushButton {
+                padding: 12px;
+                background: #ff7b00;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background: #ff9500;
+            }
+            QPushButton:disabled {
+                background: #666;
+                color: #999;
+            }
+        """)
         self.login_btn.setMinimumHeight(45)
         self.login_btn.clicked.connect(self.handle_login)
         layout.addWidget(self.login_btn)
         
-        #separador
-        separator = QLabel("━ ou ━")
-        separator.setAlignment(Qt.AlignCenter)
-        separator.setStyleSheet("color: #a0aec0; margin: 15px 0;")
-        layout.addWidget(separator)
+        # Link para cadastro
+        switch_layout = QHBoxLayout()
+        switch_label = QLabel("Não tem conta?")
+        switch_label.setStyleSheet("color: #ccc;")
         
-        #botão de registro
-        self.register_btn = QPushButton("✨ Criar Nova Conta")
-        self.register_btn.setObjectName("secondary")
-        self.register_btn.setMinimumHeight(40)
-        self.register_btn.clicked.connect(self.show_register)
-        layout.addWidget(self.register_btn)
+        self.switch_to_register_btn = QPushButton("Cadastre-se")
+        self.switch_to_register_btn.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                color: #ff7b00;
+                border: none;
+                text-decoration: underline;
+                padding: 5px;
+            }
+            QPushButton:hover {
+                color: #ff9500;
+            }
+        """)
+        self.switch_to_register_btn.clicked.connect(self.show_register)
         
+        switch_layout.addWidget(switch_label)
+        switch_layout.addWidget(self.switch_to_register_btn)
+        switch_layout.addStretch()
+        
+        layout.addLayout(switch_layout)
         widget.setLayout(layout)
         return widget
     
@@ -104,53 +209,132 @@ class AuthWidget(QWidget):
         widget = QWidget()
         layout = QVBoxLayout()
         layout.setSpacing(15)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setContentsMargins(0, 0, 0, 0)
         
-        title = QLabel("Criar Conta")
-        title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(title)
-        
-        subtitle = QLabel("Junte-se à comunidade AniPlay")
-        subtitle.setObjectName("subtitle")
-        subtitle.setAlignment(Qt.AlignCenter)
-        layout.addWidget(subtitle)
-        
-        #campos de registro
+        # Campos de registro
         self.reg_username_input = QLineEdit()
-        self.reg_username_input.setPlaceholderText("👤 Escolha um usuário")
+        self.reg_username_input.setPlaceholderText("Username:")
+        self.reg_username_input.setStyleSheet("""
+            QLineEdit {
+                padding: 12px;
+                background: #3a3a3a;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #ff7b00;
+            }
+        """)
         self.reg_username_input.setMinimumHeight(45)
         layout.addWidget(self.reg_username_input)
         
         self.reg_email_input = QLineEdit()
-        self.reg_email_input.setPlaceholderText("📧 Seu melhor email")
+        self.reg_email_input.setPlaceholderText("Email:")
+        self.reg_email_input.setStyleSheet("""
+            QLineEdit {
+                padding: 12px;
+                background: #3a3a3a;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #ff7b00;
+            }
+        """)
         self.reg_email_input.setMinimumHeight(45)
         layout.addWidget(self.reg_email_input)
         
         self.reg_password_input = QLineEdit()
-        self.reg_password_input.setPlaceholderText("🔒 Crie uma senha forte")
+        self.reg_password_input.setPlaceholderText("Senha:")
         self.reg_password_input.setEchoMode(QLineEdit.Password)
+        self.reg_password_input.setStyleSheet("""
+            QLineEdit {
+                padding: 12px;
+                background: #3a3a3a;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #ff7b00;
+            }
+        """)
         self.reg_password_input.setMinimumHeight(45)
         layout.addWidget(self.reg_password_input)
         
         self.reg_confirm_password_input = QLineEdit()
-        self.reg_confirm_password_input.setPlaceholderText("🔒 Confirme sua senha")
+        self.reg_confirm_password_input.setPlaceholderText("Confirmar Senha:")
         self.reg_confirm_password_input.setEchoMode(QLineEdit.Password)
+        self.reg_confirm_password_input.setStyleSheet("""
+            QLineEdit {
+                padding: 12px;
+                background: #3a3a3a;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #ff7b00;
+            }
+        """)
         self.reg_confirm_password_input.setMinimumHeight(45)
         layout.addWidget(self.reg_confirm_password_input)
         
-        #botão de registro
-        self.register_confirm_btn = QPushButton("🚀 Criar Minha Conta")
+        # Botão de registro
+        self.register_confirm_btn = QPushButton("Cadastrar")
+        self.register_confirm_btn.setStyleSheet("""
+            QPushButton {
+                padding: 12px;
+                background: #ff7b00;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background: #ff9500;
+            }
+            QPushButton:disabled {
+                background: #666;
+                color: #999;
+            }
+        """)
         self.register_confirm_btn.setMinimumHeight(45)
         self.register_confirm_btn.clicked.connect(self.handle_register)
         layout.addWidget(self.register_confirm_btn)
         
-        #botão voltar
-        self.back_to_login_btn = QPushButton("↩️ Voltar para Login")
-        self.back_to_login_btn.setObjectName("secondary")
-        self.back_to_login_btn.setMinimumHeight(40)
-        self.back_to_login_btn.clicked.connect(self.show_login)
-        layout.addWidget(self.back_to_login_btn)
+        # Link para login
+        switch_layout = QHBoxLayout()
+        switch_label = QLabel("Já tem conta?")
+        switch_label.setStyleSheet("color: #ccc;")
         
+        self.switch_to_login_btn = QPushButton("Faça login")
+        self.switch_to_login_btn.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                color: #ff7b00;
+                border: none;
+                text-decoration: underline;
+                padding: 5px;
+            }
+            QPushButton:hover {
+                color: #ff9500;
+            }
+        """)
+        self.switch_to_login_btn.clicked.connect(self.show_login)
+        
+        switch_layout.addWidget(switch_label)
+        switch_layout.addWidget(self.switch_to_login_btn)
+        switch_layout.addStretch()
+        
+        layout.addLayout(switch_layout)
         widget.setLayout(layout)
         return widget
     
@@ -167,7 +351,7 @@ class AuthWidget(QWidget):
         
         success, result = self.auth_system.login_user(username, password)
         
-        self.login_btn.setText("🎮 Entrar no AniPlay")
+        self.login_btn.setText("Entrar")
         self.login_btn.setEnabled(True)
         
         if success:
@@ -197,12 +381,12 @@ class AuthWidget(QWidget):
             self.show_message("Erro", "O usuário deve ter pelo menos 3 caracteres.", "error")
             return
         
-        self.register_confirm_btn.setText("Criando conta...")
+        self.register_confirm_btn.setText("Cadastrando...")
         self.register_confirm_btn.setEnabled(False)
         
         success, result = self.auth_system.register_user(username, email, password)
         
-        self.register_confirm_btn.setText("🚀 Criar Minha Conta")
+        self.register_confirm_btn.setText("Cadastrar")
         self.register_confirm_btn.setEnabled(True)
         
         if success:
@@ -214,9 +398,35 @@ class AuthWidget(QWidget):
     
     def show_register(self):
         self.stacked_layout.setCurrentIndex(1)
+        self.login_tab_btn.setStyleSheet(self.get_tab_style(False))
+        self.register_tab_btn.setStyleSheet(self.get_tab_style(True))
     
     def show_login(self):
         self.stacked_layout.setCurrentIndex(0)
+        self.login_tab_btn.setStyleSheet(self.get_tab_style(True))
+        self.register_tab_btn.setStyleSheet(self.get_tab_style(False))
+    
+    def get_tab_style(self, active):
+        base_style = """
+            QPushButton {
+                padding: 12px 24px;
+                border: none;
+                color: white;
+                background: transparent;
+                border-bottom: 2px solid transparent;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background: #3a3a3a;
+            }
+        """
+        active_style = """
+            QPushButton {
+                border-bottom: 2px solid #ff7b00;
+                color: #ff7b00;
+            }
+        """
+        return base_style + (active_style if active else "")
     
     def clear_register_fields(self):
         self.reg_username_input.clear()
@@ -226,10 +436,10 @@ class AuthWidget(QWidget):
     
     def show_message(self, title, message, type="info"):
         colors = {
-            "error": {"bg": "#2d3748", "border": "#e53e3e", "icon": "❌"},
-            "warning": {"bg": "#2d3748", "border": "#dd6b20", "icon": "⚠️"}, 
-            "success": {"bg": "#2d3748", "border": "#38a169", "icon": "✅"},
-            "info": {"bg": "#2d3748", "border": "#3182ce", "icon": "ℹ️"}
+            "error": {"bg": "#2a2a2a", "border": "#e53e3e", "icon": "❌"},
+            "warning": {"bg": "#2a2a2a", "border": "#dd6b20", "icon": "⚠️"}, 
+            "success": {"bg": "#2a2a2a", "border": "#38a169", "icon": "✅"},
+            "info": {"bg": "#2a2a2a", "border": "#3182ce", "icon": "ℹ️"}
         }
         
         color_info = colors.get(type, colors["info"])
@@ -244,7 +454,6 @@ class AuthWidget(QWidget):
                 color: #f7fafc;
                 border: 2px solid {color_info['border']};
                 border-radius: 10px;
-                font-family: 'Segoe UI', Arial, sans-serif;
             }}
             QMessageBox QLabel {{
                 color: #f7fafc;
@@ -255,18 +464,13 @@ class AuthWidget(QWidget):
                 background-color: {color_info['border']};
                 color: white;
                 border: none;
-                border-radius: 6px;
+                border-radius: 5px;
                 padding: 8px 20px;
                 font-size: 12px;
-                font-weight: bold;
                 min-width: 80px;
-                margin: 5px;
             }}
             QMessageBox QPushButton:hover {{
                 background-color: #4a5568;
-            }}
-            QMessageBox QPushButton:pressed {{
-                background-color: #2d3748;
             }}
         """)
         
@@ -281,49 +485,10 @@ class AuthWidget(QWidget):
         
         msg.exec()
 
-    def try_auto_login(self):
-        """Tenta fazer login automático com sessão salva"""
-        session = self.auth_system.load_session()
-        if session:
-            user_info = self.auth_system.get_user_info(session['user_id'])
-            if user_info:
-                self.username_input.setText(user_info['username'])
-                logger.info(f"⚡ Sessão encontrada para: {user_info['username']}")
-                
-                msg = QMessageBox()
-                msg.setWindowTitle("Sessão Salva")
-                msg.setText(f"Bem-vindo de volta, {user_info['username']}!\n\nDeseja fazer login automaticamente?")
-                msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-                msg.setDefaultButton(QMessageBox.Yes)
-                
-                msg.setStyleSheet("""
-                    QMessageBox {
-                        background-color: #2d3748;
-                        color: #f7fafc;
-                        border: 2px solid #667eea;
-                        border-radius: 10px;
-                    }
-                    QMessageBox QLabel {
-                        color: #f7fafc;
-                        font-size: 14px;
-                    }
-                    QMessageBox QPushButton {
-                        background-color: #667eea;
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                        padding: 8px 15px;
-                        min-width: 80px;
-                        margin: 5px;
-                    }
-                    QMessageBox QPushButton:hover {
-                        background-color: #5a6fd8;
-                    }
-                """)
-                
-                if msg.exec() == QMessageBox.Yes:
-                    self.password_input.setFocus()
-                    self.login_btn.setStyleSheet("background-color: #38a169;")
-                    self.login_btn.setText("⚡ Login Automático Disponível")
-                    return True
-        return False
+    def show_register_tab(self):
+        """Método para ser chamado externamente para mostrar a aba de registro"""
+        self.show_register()
+
+    def show_login_tab(self):
+        """Método para ser chamado externamente para mostrar a aba de login"""
+        self.show_login()

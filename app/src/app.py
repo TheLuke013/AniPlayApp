@@ -1,7 +1,7 @@
 import sqlite3
 from PySide6.QtWidgets import (QMainWindow, QStackedWidget, QWidget, QVBoxLayout,
                                 QLabel, QPushButton, QHBoxLayout, QMessageBox, QFrame,
-                                  QLineEdit, QListWidget, QScrollArea)
+                                QLineEdit, QListWidget, QScrollArea, QDialog)
 from PySide6.QtCore import Qt
 from loguru import logger
 import jwt
@@ -71,7 +71,7 @@ class AniPlayApp(QMainWindow):
                 self.auth_system.save_session(payload['user_id'], token)
             
             self.load_user_data()
-            self.stacked_widget.setCurrentIndex(1)
+            self.update_ui_after_login()
             
             if auto_login:
                 logger.info(f"⚡ Login automático bem-sucedido: {self.current_user['username']}")
@@ -202,11 +202,51 @@ class AniPlayApp(QMainWindow):
 
         header.setLayout(layout)
         
-        # Conectar botões
-        self.login_btn.clicked.connect(self.login)
+        # 🔥 CORREÇÃO: Conectar botões aos métodos corretos
+        self.login_btn.clicked.connect(self.show_auth_modal)
+        self.register_btn.clicked.connect(self.show_auth_modal)
         self.logout_btn.clicked.connect(self.logout)
         
         return header
+
+    def show_auth_modal(self):
+        """Mostra o modal de autenticação (login/registro)"""
+        # Criar uma janela de diálogo modal
+        auth_dialog = QDialog(self)
+        auth_dialog.setWindowTitle("AniPlay - Autenticação")
+        auth_dialog.setModal(True)
+        auth_dialog.resize(400, 500)
+        auth_dialog.setStyleSheet("""
+            QDialog {
+                background: #2a2a2a;
+                border-radius: 10px;
+            }
+        """)
+        
+        # Criar o AuthWidget dentro do diálogo
+        auth_widget = AuthWidget(self.auth_system, lambda token: self.on_auth_success(token, auth_dialog))
+        
+        # Layout para o diálogo
+        layout = QVBoxLayout()
+        layout.addWidget(auth_widget)
+        auth_dialog.setLayout(layout)
+        
+        # Se o botão clicado foi "Cadastrar", já mostrar a aba de registro
+        sender = self.sender()
+        if sender == self.register_btn:
+            auth_widget.show_register()
+        else:
+            auth_widget.show_login()
+            
+        auth_dialog.exec()
+
+    def on_auth_success(self, token, auth_dialog):
+        """Chamado quando a autenticação é bem-sucedida"""
+        # Fechar o diálogo primeiro
+        auth_dialog.accept()
+        
+        # Processar o login
+        self.on_login_success(token)
 
     def create_search_section(self):
         section = QWidget()
@@ -221,16 +261,6 @@ class AniPlayApp(QMainWindow):
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
-
-        # Título
-        title = QLabel("🎬 AniPlay")
-        title.setStyleSheet("""
-            QLabel {
-                font-size: 36px;
-                margin-bottom: 20px;
-                color: #ff7b00;
-            }
-        """)
 
         # Campo de busca
         search_widget = QWidget()
@@ -274,7 +304,6 @@ class AniPlayApp(QMainWindow):
 
         search_widget.setLayout(search_layout)
 
-        layout.addWidget(title)
         layout.addWidget(search_widget)
 
         section.setLayout(layout)
@@ -630,38 +659,122 @@ class AniPlayApp(QMainWindow):
         """
         return base_style + (active_style if active else "")
 
-    def login(self):
-        # Simular login
-        self.current_user = {"username": "Usuário"}
-        self.welcome_label.setText(f"Olá, <span style='color: #ff7b00; font-weight: bold;'>{self.current_user['username']}</span>!")
-        self.welcome_label.show()
-        self.login_btn.hide()
-        self.register_btn.hide()
-        self.logout_btn.show()
-        self.profile_tab.show()
+    def update_ui_after_login(self):
+        """Atualiza a UI após o login bem-sucedido"""
+        if self.current_user:
+            username = self.current_user.get('username', 'Usuário')
+            self.welcome_label.setText(f"Olá, <span style='color: #ff7b00; font-weight: bold;'>{username}</span>!")
+            self.welcome_label.show()
+            self.login_btn.hide()
+            self.register_btn.hide()
+            self.logout_btn.show()
+            self.profile_tab.show()
+            
+            # Atualizar conteúdo do perfil
+            self.update_profile_tab()
+
+    def update_profile_tab(self):
+        """Atualiza o conteúdo da aba de perfil"""
+        if self.current_user:
+            username = self.current_user.get('username', 'Usuário')
+            email = self.current_user.get('email', 'Não informado')
+            
+            # Criar conteúdo personalizado do perfil
+            profile_layout = QVBoxLayout()
+            profile_layout.setAlignment(Qt.AlignTop)
+            
+            # Informações do usuário
+            user_info = QLabel(f"""
+                <h2 style="color: #ff7b00;">👤 Meu Perfil</h2>
+                <p><strong>Usuário:</strong> {username}</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p><strong>Membro desde:</strong> {datetime.datetime.now().strftime('%d/%m/%Y')}</p>
+            """)
+            user_info.setStyleSheet("color: white; font-size: 14px;")
+            
+            profile_layout.addWidget(user_info)
+            profile_layout.addSpacing(20)
+            
+            # Limpar layout atual e adicionar o novo
+            if self.profile_content.layout():
+                # Limpar widgets antigos
+                for i in reversed(range(self.profile_content.layout().count())): 
+                    self.profile_content.layout().itemAt(i).widget().setParent(None)
+            
+            self.profile_content.setLayout(profile_layout)
 
     def logout(self):
-        self.current_user = None
-        self.welcome_label.hide()
-        self.login_btn.show()
-        self.register_btn.show()
-        self.logout_btn.hide()
-        self.profile_tab.hide()
-        self.show_tab('home')
+        """Faz logout do usuário"""
+        reply = QMessageBox.question(
+            self, 
+            "Sair", 
+            "Deseja realmente sair?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            self.auth_system.clear_session()
+            
+            self.current_user = None
+            if self.user_db:
+                self.user_db.close()
+                self.user_db = None
+            
+            # Resetar UI
+            self.welcome_label.hide()
+            self.login_btn.show()
+            self.register_btn.show()
+            self.logout_btn.hide()
+            self.profile_tab.hide()
+            
+            # Resetar conteúdo do perfil
+            self.reset_profile_tab()
+            
+            self.show_tab('home')
+            logger.info("👋 Usuário fez logout")
+    
+    def reset_profile_tab(self):
+        """Reseta o conteúdo da aba de perfil para o estado inicial"""
+        # Limpar layout atual
+        if self.profile_content.layout():
+            for i in reversed(range(self.profile_content.layout().count())): 
+                self.profile_content.layout().itemAt(i).widget().setParent(None)
+        
+        # Recriar conteúdo inicial
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
+
+        message = QLabel("Faça login para ver seu perfil")
+        message.setStyleSheet("""
+            QLabel {
+                text-align: center;
+                padding: 40px;
+                color: #ff7b00;
+                font-size: 18px;
+            }
+        """)
+
+        layout.addWidget(message)
+        self.profile_content.setLayout(layout)
     
     def load_user_data(self):
-        user_id = self.current_user['user_id']
-        user_db_path = self.auth_system.get_app_data_path() / f"user_{user_id}.db"
-        
-        self.user_db = sqlite3.connect(user_db_path)
-        
-        cursor = self.user_db.cursor()
-        cursor.execute("SELECT theme, language FROM preferences WHERE user_id = ?", (user_id,))
-        prefs = cursor.fetchone()
-        
-        if prefs:
-            theme, language = prefs
-            logger.info(f"Preferências carregadas: {theme}, {language}")
+        try:
+            user_id = self.current_user['user_id']
+            user_db_path = self.auth_system.get_app_data_path() / f"user_{user_id}.db"
+            
+            self.user_db = sqlite3.connect(user_db_path)
+            
+            cursor = self.user_db.cursor()
+            cursor.execute("SELECT theme, language FROM preferences WHERE user_id = ?", (user_id,))
+            prefs = cursor.fetchone()
+            
+            if prefs:
+                theme, language = prefs
+                logger.info(f"🎨 Preferências carregadas: {theme}, {language}")
+                
+        except Exception as e:
+            logger.error(f"❌ Erro ao carregar dados do usuário: {e}")
 
     def setup_logger(self):
         logger.remove()
