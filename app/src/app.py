@@ -2,7 +2,7 @@ import sqlite3
 from PySide6.QtWidgets import (QMainWindow, QStackedWidget, QWidget, QVBoxLayout,
                                 QLabel, QPushButton, QHBoxLayout, QMessageBox, QFrame,
                                 QLineEdit, QListWidget, QScrollArea, QDialog)
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer, Signal, Slot
 from loguru import logger
 import jwt
 import datetime
@@ -11,13 +11,16 @@ import sys
 import subprocess
 from pathlib import Path
 import threading
+import json
 
 from auth.auth import AuthSystem
 from auth.auth_widget import AuthWidget
-from anime.anime_data import get_anime_info
+from anime.anime_data import get_anime_info, get_anime_home_page
 from api.server_monitor import ServerMonitor
 
 class AniPlayApp(QMainWindow):
+    api_ready_signal = Signal(bool)
+
     def __init__(self):
         super().__init__()
         #configura a janela principal
@@ -39,6 +42,9 @@ class AniPlayApp(QMainWindow):
 
         #inicia a API do Aniwatch
         self.init_aniwatch_api()
+
+        self.api_ready_signal.connect(self.on_api_ready)
+        self.api_ready_signal.connect(self.on_api_status_changed)
 
     def try_auto_login(self):
         try:
@@ -391,58 +397,38 @@ class AniPlayApp(QMainWindow):
                 border: none;
                 background: transparent;
             }
-            QScrollBar:vertical {
-                background: #2a2a2a;
-                width: 8px;
-                border-radius: 4px;
-            }
-            QScrollBar::handle:vertical {
-                background: #ff7b00;
-                border-radius: 4px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background: #ff9500;
+        """)
+
+        # Conteúdo principal
+        self.home_container = QWidget()
+        self.home_layout = QVBoxLayout()
+        self.home_container.setLayout(self.home_layout)
+
+        # --- CARREGANDO (EXIBIDO ATÉ api_ready=True) ---
+        self.loading_label = QLabel("Carregando")
+        self.loading_label.setAlignment(Qt.AlignCenter)
+        self.loading_label.setStyleSheet("""
+            QLabel {
+                font-size: 32px;
+                color: #ff7b00;
+                padding: 50px;
             }
         """)
 
-        content = QWidget()
-        layout = QVBoxLayout()
+        self.home_layout.addWidget(self.loading_label)
 
-        # Seção "Em Alta Agora"
-        trending_section = self.create_anime_section("🔥 Em Alta Agora", [
-            {"title": "Attack on Titan", "score": "9.8", "status": "Em exibição"},
-            {"title": "Demon Slayer", "score": "9.5", "status": "Concluído"},
-            {"title": "Jujutsu Kaisen", "score": "9.3", "status": "Em exibição"},
-            {"title": "One Piece", "score": "9.7", "status": "Em exibição"},
-            {"title": "My Hero Academia", "score": "9.2", "status": "Em exibição"},
-        ])
+        # Animação dos pontinhos
+        self.loading_dots = 0
+        self.loading_timer = QTimer()
+        self.loading_timer.timeout.connect(self.animate_loading)
+        self.loading_timer.start(500)
 
-        # Seção "Clássicos Populares"
-        popular_section = self.create_anime_section("⭐ Clássicos Populares", [
-            {"title": "Naruto Shippuden", "score": "9.6", "status": "Concluído"},
-            {"title": "Death Note", "score": "9.4", "status": "Concluído"},
-            {"title": "Fullmetal Alchemist", "score": "9.7", "status": "Concluído"},
-            {"title": "Dragon Ball Z", "score": "9.1", "status": "Concluído"},
-            {"title": "Hunter x Hunter", "score": "9.5", "status": "Concluído"},
-        ])
-
-        # Seção "Lançamentos Recentes"
-        recent_section = self.create_anime_section("🆕 Lançamentos Recentes", [
-            {"title": "Chainsaw Man", "score": "9.4", "status": "Novo"},
-            {"title": "Spy x Family", "score": "9.2", "status": "Novo"},
-            {"title": "Blue Lock", "score": "9.1", "status": "Novo"},
-            {"title": "Oshi no Ko", "score": "9.3", "status": "Novo"},
-            {"title": "Hell's Paradise", "score": "9.0", "status": "Novo"},
-        ])
-
-        layout.addWidget(trending_section)
-        layout.addWidget(popular_section)
-        layout.addWidget(recent_section)
-        layout.addStretch()
-
-        content.setLayout(layout)
-        scroll.setWidget(content)
+        scroll.setWidget(self.home_container)
         return scroll
+    
+    def animate_loading(self):
+        self.loading_dots = (self.loading_dots + 1) % 4
+        self.loading_label.setText("Carregando" + "." * self.loading_dots)
 
     def create_anime_section(self, title, animes):
         section = QWidget()
@@ -679,7 +665,8 @@ class AniPlayApp(QMainWindow):
             username = self.current_user.get('username', 'Usuário')
             email = self.current_user.get('email', 'Não informado')
             
-            # Criar conteúdo personalizado do perfil
+            # 🔥 CORREÇÃO: Criar um novo widget para o perfil
+            new_profile_widget = QWidget()
             profile_layout = QVBoxLayout()
             profile_layout.setAlignment(Qt.AlignTop)
             
@@ -693,15 +680,12 @@ class AniPlayApp(QMainWindow):
             user_info.setStyleSheet("color: white; font-size: 14px;")
             
             profile_layout.addWidget(user_info)
-            profile_layout.addSpacing(20)
+            new_profile_widget.setLayout(profile_layout)
             
-            # Limpar layout atual e adicionar o novo
-            if self.profile_content.layout():
-                # Limpar widgets antigos
-                for i in reversed(range(self.profile_content.layout().count())): 
-                    self.profile_content.layout().itemAt(i).widget().setParent(None)
-            
-            self.profile_content.setLayout(profile_layout)
+            # 🔥 CORREÇÃO: Substituir o widget no content_stack
+            self.content_stack.removeWidget(self.profile_content)
+            self.profile_content = new_profile_widget
+            self.content_stack.insertWidget(2, self.profile_content)
 
     def logout(self):
         """Faz logout do usuário"""
@@ -808,17 +792,32 @@ class AniPlayApp(QMainWindow):
         threading.Thread(target=start_api, daemon=True).start()
 
     def start_api_monitoring(self):
-        monitor = ServerMonitor()
-        monitor.wait_for_server(callback=self.on_api_status_changed)
+        self.server_monitor = ServerMonitor()
+        self.server_monitor.wait_for_server(
+            lambda ready: self.api_ready_signal.emit(ready)
+        )
 
+    @Slot(bool)
     def on_api_status_changed(self, is_ready):
         if is_ready:
-            logger.info("🎉 API está pronta! Habilitando funcionalidades...")
-            self.api_ready = True
-        else:
-            logger.error("💥 API não ficou pronta a tempo")
-            self.api_ready = False
-    
+            self.on_api_ready()
+  
+    def on_api_ready(self):
+        # Para animação
+        self.loading_timer.stop()
+
+        # Remove o loading
+        self.loading_label.hide()
+
+        # Adiciona as seções reais
+        trending = self.create_anime_section("🔥 Em Alta Agora", [])
+        popular = self.create_anime_section("⭐ Clássicos Populares", [])
+        recent = self.create_anime_section("🆕 Lançamentos Recentes", [])
+
+        self.home_layout.addWidget(trending)
+        self.home_layout.addWidget(popular)
+        self.home_layout.addWidget(recent)
+
     def closeEvent(self, event):
         if self.user_db:
             self.user_db.close()
