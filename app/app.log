@@ -1,62 +1,136 @@
-2025-11-23 19:26:18.233 | INFO     | app:__init__:38 - AniPlay iniciado
-2025-11-23 19:26:18.241 | INFO     | auth.auth:setup_database:46 - Banco de dados de usuários inicializado
-2025-11-23 19:26:18.241 | INFO     | auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
-2025-11-23 19:26:18.261 | WARNING  | auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
-2025-11-23 19:26:18.284 | INFO     | auth.auth:load_session:265 - ✅ Sessão carregada para usuário TheLuke013
-2025-11-23 19:26:18.284 | INFO     | app:try_auto_login:267 - 🎯 Tentando login automático para usuário ID: 1
-2025-11-23 19:26:18.286 | INFO     | app:load_user_data:999 - 🎨 Preferências carregadas: dark, pt-BR
-2025-11-23 19:26:18.289 | INFO     | app:on_login_success:296 - ⚡ Login automático bem-sucedido: TheLuke013
-2025-11-23 19:26:18.289 | INFO     | app:init_aniwatch_api:1015 - Inicializando Anime API...
-2025-11-23 19:26:18.290 | INFO     | app:start_api:1021 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-23 19:26:18.291 | DEBUG    | app:get_cache_directory:111 - ✅ Cache directory: C:\Users\Luke\AppData\Local\AniPlay\cache\images
-2025-11-23 19:26:18.312 | INFO     | app:start_api:1027 - 🚀 Processo da API iniciado
-2025-11-23 19:26:18.416 | INFO     | app:check_cache_files:91 - 📁 Arquivos no cache: 19
-2025-11-23 19:26:18.417 | DEBUG    | app:check_cache_files:96 -   1. black-clover-2404.jpg (110.5 KB)
-2025-11-23 19:26:18.417 | DEBUG    | app:check_cache_files:96 -   2. bleach-806.jpg (24.0 KB)
-2025-11-23 19:26:18.418 | DEBUG    | app:check_cache_files:96 -   3. campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg (45.3 KB)
-2025-11-23 19:26:18.418 | DEBUG    | app:check_cache_files:96 -   4. dusk-beyond-the-end-of-the-world-19905.jpg (115.4 KB)
-2025-11-23 19:26:18.418 | DEBUG    | app:check_cache_files:96 -   5. hero-without-a-class-who-even-needs-skills-19912.jpg (117.1 KB)
-2025-11-23 19:26:18.418 | INFO     | app:__init__:72 - 💾 Cache local: 1.50 MB, 19 arquivos
-2025-11-23 19:26:20.452 | INFO     | api.server_monitor:check_server:19 - ✅ Servidor da API está pronto!
-2025-11-23 19:26:21.590 | INFO     | anime.anime_data:get_animes_home_page:30 - ✅ Dados dos animes obtidos com sucesso
-2025-11-23 19:26:21.594 | INFO     | app:on_api_ready:1054 - ✅ Dados dos animes obtidos com sucesso
-2025-11-23 19:26:21.601 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: one-piece-100.jpg
-2025-11-23 19:26:21.601 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: one-piece-100
-2025-11-23 19:26:21.605 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908.jpg
-2025-11-23 19:26:21.606 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908
-2025-11-23 19:26:21.609 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: one-punch-man-season-3-19932.jpg
-2025-11-23 19:26:21.609 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: one-punch-man-season-3-19932
-2025-11-23 19:26:21.614 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: spy-x-family-season-3-19931.jpg
-2025-11-23 19:26:21.614 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: spy-x-family-season-3-19931
-2025-11-23 19:26:21.621 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: my-hero-academia-final-season-19930.jpg
-2025-11-23 19:26:21.621 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: my-hero-academia-final-season-19930
-2025-11-23 19:26:21.626 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: dusk-beyond-the-end-of-the-world-19905.jpg
-2025-11-23 19:26:21.626 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: dusk-beyond-the-end-of-the-world-19905
-2025-11-23 19:26:21.631 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: hero-without-a-class-who-even-needs-skills-19912.jpg
-2025-11-23 19:26:21.631 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: hero-without-a-class-who-even-needs-skills-19912
-2025-11-23 19:26:21.635 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg
-2025-11-23 19:26:21.636 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928
-2025-11-23 19:26:21.639 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: the-banished-court-magician-aims-to-become-the-strongest-19902.jpg
-2025-11-23 19:26:21.640 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: the-banished-court-magician-aims-to-become-the-strongest-19902
-2025-11-23 19:26:21.644 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: my-status-as-an-assassin-obviously-exceeds-the-heros-19922.jpg
-2025-11-23 19:26:21.644 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: my-status-as-an-assassin-obviously-exceeds-the-heros-19922
-2025-11-23 19:26:21.716 | DEBUG    | app:load_anime_poster_async:151 - ✅ Imagem one-piece-100 já em cache de memória
-2025-11-23 19:26:21.720 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: naruto-shippuden-355.jpg
-2025-11-23 19:26:21.721 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: naruto-shippuden-355
-2025-11-23 19:26:21.725 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: bleach-806.jpg
-2025-11-23 19:26:21.725 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: bleach-806
-2025-11-23 19:26:21.729 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: black-clover-2404.jpg
-2025-11-23 19:26:21.729 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: black-clover-2404
-2025-11-23 19:26:21.733 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: solo-leveling-season-2-arise-from-the-shadow-19413.jpg
-2025-11-23 19:26:21.734 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: solo-leveling-season-2-arise-from-the-shadow-19413
-2025-11-23 19:26:21.768 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: the-fragrant-flower-blooms-with-dignity-19789.jpg
-2025-11-23 19:26:21.768 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: the-fragrant-flower-blooms-with-dignity-19789
-2025-11-23 19:26:21.772 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-5388.jpg
-2025-11-23 19:26:21.772 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-5388
-2025-11-23 19:26:21.776 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-specials-6009.jpg
-2025-11-23 19:26:21.776 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-specials-6009
-2025-11-23 19:26:21.780 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: sylvanian-families-magic-tricks-and-other-adventures-11891.jpg
-2025-11-23 19:26:21.780 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: sylvanian-families-magic-tricks-and-other-adventures-11891
-2025-11-23 19:26:21.784 | DEBUG    | app:load_from_cache_sync:209 - ✅ Cache síncrono válido: umi-monogatari-seeing-amamiko-island-with-kanon-7920.jpg
-2025-11-23 19:26:21.784 | DEBUG    | app:load_anime_poster_async:160 - 💾 Cache SÍNCRONO encontrado: umi-monogatari-seeing-amamiko-island-with-kanon-7920
-2025-11-23 19:26:35.632 | INFO     | app:closeEvent:1091 - 💾 Cache final: 1.50 MB
+2025-11-23 20:14:51.690 | INFO     | app:__init__:39 - AniPlay iniciado
+2025-11-23 20:14:51.698 | INFO     | modules.auth.auth:setup_database:46 - Banco de dados de usuários inicializado
+2025-11-23 20:14:51.698 | INFO     | modules.auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
+2025-11-23 20:14:51.719 | WARNING  | modules.auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
+2025-11-23 20:14:51.720 | DEBUG    | modules.cache.image_cache:get_cache_directory:21 - ✅ Cache directory: C:\Users\Luke\AppData\Local\AniPlay\cache\images
+2025-11-23 20:14:51.746 | INFO     | modules.auth.auth:load_session:265 - ✅ Sessão carregada para usuário TheLuke013
+2025-11-23 20:14:51.747 | INFO     | app:try_auto_login:160 - 🎯 Tentando login automático para usuário ID: 1
+2025-11-23 20:14:51.749 | INFO     | app:load_user_data:685 - 🎨 Preferências carregadas: dark, pt-BR
+2025-11-23 20:14:51.752 | INFO     | app:on_login_success:189 - ⚡ Login automático bem-sucedido: TheLuke013
+2025-11-23 20:14:51.752 | INFO     | app:init_aniwatch_api:701 - Inicializando Anime API...
+2025-11-23 20:14:51.754 | INFO     | app:start_api:707 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-23 20:14:51.759 | INFO     | app:start_api:713 - 🚀 Processo da API iniciado
+2025-11-23 20:14:51.765 | INFO     | app:check_cache_files:69 - 📁 Arquivos no cache: 44
+2025-11-23 20:14:51.769 | DEBUG    | app:check_cache_files:74 -   1. alma-chan-wants-to-have-a-family-19888.jpg (26.7 KB)
+2025-11-23 20:14:51.769 | DEBUG    | app:check_cache_files:74 -   2. attack-on-titan-112.jpg (97.8 KB)
+2025-11-23 20:14:51.769 | DEBUG    | app:check_cache_files:74 -   3. black-clover-2404.jpg (110.5 KB)
+2025-11-23 20:14:51.770 | DEBUG    | app:check_cache_files:74 -   4. bleach-806.jpg (24.0 KB)
+2025-11-23 20:14:51.770 | DEBUG    | app:check_cache_files:74 -   5. campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg (45.3 KB)
+2025-11-23 20:14:51.770 | INFO     | app:__init__:63 - 💾 Cache local: 3.08 MB, 44 arquivos
+2025-11-23 20:14:54.163 | INFO     | api.server_monitor:check_server:19 - ✅ Servidor da API está pronto!
+2025-11-23 20:14:55.143 | INFO     | modules.anime.anime_data:get_animes_home_page:30 - ✅ Dados dos animes obtidos com sucesso
+2025-11-23 20:14:55.150 | INFO     | modules.ui.home:__init__:17 - ✅ Dados dos animes obtidos com sucesso
+2025-11-23 20:14:55.199 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-punch-man-season-3-19932.jpg
+2025-11-23 20:14:55.200 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: one-punch-man-season-3-19932
+2025-11-23 20:14:55.212 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-hero-academia-final-season-19930.jpg
+2025-11-23 20:14:55.213 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: my-hero-academia-final-season-19930
+2025-11-23 20:14:55.219 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-banished-court-magician-aims-to-become-the-strongest-19902.jpg
+2025-11-23 20:14:55.219 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-banished-court-magician-aims-to-become-the-strongest-19902
+2025-11-23 20:14:55.225 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908.jpg
+2025-11-23 20:14:55.225 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908
+2025-11-23 20:14:55.235 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hero-without-a-class-who-even-needs-skills-19912.jpg
+2025-11-23 20:14:55.236 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: hero-without-a-class-who-even-needs-skills-19912
+2025-11-23 20:14:55.242 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg
+2025-11-23 20:14:55.242 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928
+2025-11-23 20:14:55.253 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-status-as-an-assassin-obviously-exceeds-the-heros-19922.jpg
+2025-11-23 20:14:55.254 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: my-status-as-an-assassin-obviously-exceeds-the-heros-19922
+2025-11-23 20:14:55.265 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-piece-100.jpg
+2025-11-23 20:14:55.265 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: one-piece-100
+2025-11-23 20:14:55.325 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:14:55.328 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908 já em cache de memória
+2025-11-23 20:14:55.333 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-punch-man-season-3-19932 já em cache de memória
+2025-11-23 20:14:55.345 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: spy-x-family-season-3-19931.jpg
+2025-11-23 20:14:55.345 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: spy-x-family-season-3-19931
+2025-11-23 20:14:55.349 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-hero-academia-final-season-19930 já em cache de memória
+2025-11-23 20:14:55.360 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: dusk-beyond-the-end-of-the-world-19905.jpg
+2025-11-23 20:14:55.361 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: dusk-beyond-the-end-of-the-world-19905
+2025-11-23 20:14:55.364 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem hero-without-a-class-who-even-needs-skills-19912 já em cache de memória
+2025-11-23 20:14:55.366 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928 já em cache de memória
+2025-11-23 20:14:55.369 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem the-banished-court-magician-aims-to-become-the-strongest-19902 já em cache de memória
+2025-11-23 20:14:55.372 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-status-as-an-assassin-obviously-exceeds-the-heros-19922 já em cache de memória
+2025-11-23 20:14:55.463 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hands-off-sawaranaide-kotesashi-kun-uncensored-19943.jpg
+2025-11-23 20:14:55.464 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: hands-off-sawaranaide-kotesashi-kun-uncensored-19943
+2025-11-23 20:14:55.472 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: renegade-immortal-18573.jpg
+2025-11-23 20:14:55.472 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: renegade-immortal-18573
+2025-11-23 20:14:55.480 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-fated-magical-princess-who-made-me-a-princess-19875.jpg
+2025-11-23 20:14:55.480 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-fated-magical-princess-who-made-me-a-princess-19875
+2025-11-23 20:14:55.487 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hands-off-sawaranaide-kotesashi-kun-19896.jpg
+2025-11-23 20:14:55.488 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: hands-off-sawaranaide-kotesashi-kun-19896
+2025-11-23 20:14:55.493 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-piece-wano-kuni-sp-18217.jpg
+2025-11-23 20:14:55.494 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: one-piece-wano-kuni-sp-18217
+2025-11-23 20:14:55.497 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-punch-man-season-3-19932 já em cache de memória
+2025-11-23 20:14:55.508 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: gachiakuta-19785.jpg
+2025-11-23 20:14:55.508 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: gachiakuta-19785
+2025-11-23 20:14:55.518 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: dad-is-a-hero-mom-is-a-spirit-im-a-reincarnator-19911.jpg
+2025-11-23 20:14:55.519 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: dad-is-a-hero-mom-is-a-spirit-im-a-reincarnator-19911
+2025-11-23 20:14:55.524 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: alma-chan-wants-to-have-a-family-19888.jpg
+2025-11-23 20:14:55.525 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: alma-chan-wants-to-have-a-family-19888
+2025-11-23 20:14:55.530 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: mechanical-marie-19900.jpg
+2025-11-23 20:14:55.530 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: mechanical-marie-19900
+2025-11-23 20:14:55.607 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: otherworldly-munchkin-lets-speedrun-the-dungeon-with-only-1-hp-19910.jpg
+2025-11-23 20:14:55.607 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: otherworldly-munchkin-lets-speedrun-the-dungeon-with-only-1-hp-19910
+2025-11-23 20:14:55.615 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: jochum-season-2-19880.jpg
+2025-11-23 20:14:55.615 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: jochum-season-2-19880
+2025-11-23 20:14:55.622 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: record-of-ragnarok-iii-19879.jpg
+2025-11-23 20:14:55.622 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: record-of-ragnarok-iii-19879
+2025-11-23 20:14:55.628 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-man-from-dao-xiang-cun-19873.jpg
+2025-11-23 20:14:55.628 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-man-from-dao-xiang-cun-19873
+2025-11-23 20:14:55.634 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: golden-kamuy-the-lightning-bandit-and-ogin-the-viperlong-tailed-tit-19870.jpg
+2025-11-23 20:14:55.634 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: golden-kamuy-the-lightning-bandit-and-ogin-the-viperlong-tailed-tit-19870
+2025-11-23 20:14:55.640 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: zombie-land-saga-movie-19869.jpg
+2025-11-23 20:14:55.641 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: zombie-land-saga-movie-19869
+2025-11-23 20:14:55.647 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: golden-kamuy-sapporo-beer-koujou-hen-19868.jpg
+2025-11-23 20:14:55.647 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: golden-kamuy-sapporo-beer-koujou-hen-19868
+2025-11-23 20:14:55.653 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: girls-band-cry-movie-19867.jpg
+2025-11-23 20:14:55.653 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: girls-band-cry-movie-19867
+2025-11-23 20:14:55.663 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: scarlet-19866.jpg
+2025-11-23 20:14:55.663 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: scarlet-19866
+2025-11-23 20:14:55.669 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: love-live-nijigasaki-high-school-idol-club-final-chapter-part-2-19865.jpg
+2025-11-23 20:14:55.670 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: love-live-nijigasaki-high-school-idol-club-final-chapter-part-2-19865
+2025-11-23 20:14:55.744 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:14:55.747 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem gachiakuta-19785 já em cache de memória
+2025-11-23 20:14:55.758 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: case-closed-323.jpg
+2025-11-23 20:14:55.759 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: case-closed-323
+2025-11-23 20:14:55.762 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-hero-academia-final-season-19930 já em cache de memória
+2025-11-23 20:14:55.768 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: no-longer-allowed-in-another-world-19247.jpg
+2025-11-23 20:14:55.768 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: no-longer-allowed-in-another-world-19247
+2025-11-23 20:14:55.771 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:14:55.780 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: naruto-shippuden-355.jpg
+2025-11-23 20:14:55.780 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: naruto-shippuden-355
+2025-11-23 20:14:55.786 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: bleach-806.jpg
+2025-11-23 20:14:55.786 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: bleach-806
+2025-11-23 20:14:55.796 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: black-clover-2404.jpg
+2025-11-23 20:14:55.797 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: black-clover-2404
+2025-11-23 20:14:55.802 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: solo-leveling-season-2-arise-from-the-shadow-19413.jpg
+2025-11-23 20:14:55.803 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: solo-leveling-season-2-arise-from-the-shadow-19413
+2025-11-23 20:14:55.865 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:14:55.867 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem naruto-shippuden-355 já em cache de memória
+2025-11-23 20:14:55.870 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem bleach-806 já em cache de memória
+2025-11-23 20:14:55.872 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem black-clover-2404 já em cache de memória
+2025-11-23 20:14:55.875 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem solo-leveling-season-2-arise-from-the-shadow-19413 já em cache de memória
+2025-11-23 20:14:55.908 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:14:55.917 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: jujutsu-kaisen-tv-534.jpg
+2025-11-23 20:14:55.918 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: jujutsu-kaisen-tv-534
+2025-11-23 20:14:55.928 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: chainsaw-man-17406.jpg
+2025-11-23 20:14:55.928 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: chainsaw-man-17406
+2025-11-23 20:14:55.941 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056.png
+2025-11-23 20:14:55.941 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056
+2025-11-23 20:14:55.951 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: attack-on-titan-112.jpg
+2025-11-23 20:14:55.951 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: attack-on-titan-112
+2025-11-23 20:14:55.987 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-fragrant-flower-blooms-with-dignity-19789.jpg
+2025-11-23 20:14:55.987 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-fragrant-flower-blooms-with-dignity-19789
+2025-11-23 20:14:55.997 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-5388.jpg
+2025-11-23 20:14:55.998 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-5388
+2025-11-23 20:14:56.007 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-specials-6009.jpg
+2025-11-23 20:14:56.007 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-specials-6009
+2025-11-23 20:14:56.018 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: sylvanian-families-magic-tricks-and-other-adventures-11891.jpg
+2025-11-23 20:14:56.018 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: sylvanian-families-magic-tricks-and-other-adventures-11891
+2025-11-23 20:14:56.025 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: umi-monogatari-seeing-amamiko-island-with-kanon-7920.jpg
+2025-11-23 20:14:56.025 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: umi-monogatari-seeing-amamiko-island-with-kanon-7920
+2025-11-23 20:15:19.840 | INFO     | modules.auth.auth:clear_session:285 - ✅ Sessão removida
+2025-11-23 20:15:19.858 | INFO     | app:logout:607 - 👋 Usuário fez logout
+2025-11-23 20:15:30.471 | INFO     | modules.auth.auth:login_user:147 - Login bem-sucedido: TheLuke013
+2025-11-23 20:15:30.492 | INFO     | modules.auth.auth:save_session:237 - ✅ Sessão salva para usuário 1
+2025-11-23 20:15:30.493 | INFO     | app:load_user_data:685 - 🎨 Preferências carregadas: dark, pt-BR
+2025-11-23 20:15:30.495 | INFO     | app:on_login_success:191 - ✅ Login bem-sucedido: TheLuke013
+2025-11-23 20:15:31.995 | INFO     | app:closeEvent:744 - 💾 Cache final: 3.08 MB

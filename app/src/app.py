@@ -1,93 +1,71 @@
-import sqlite3
-from PySide6.QtWidgets import (QMainWindow, QStackedWidget, QWidget, QVBoxLayout,
-                                QLabel, QPushButton, QHBoxLayout, QMessageBox, QFrame,
-                                QLineEdit, QListWidget, QScrollArea, QDialog)
-from PySide6.QtCore import Qt, QTimer, Signal, Slot, QThreadPool, QRunnable
-import concurrent.futures
-from PySide6.QtGui import QPixmap
-from loguru import logger
-import jwt
-import datetime
-import requests
-
 import sys
 import subprocess
 from pathlib import Path
 import threading
-import json
-import hashlib
-from pathlib import Path
+import sqlite3
+import datetime
 
-from auth.auth import AuthSystem
-from auth.auth_widget import AuthWidget
-from anime.anime_data import get_animes_home_page, get_search_anime
+from PySide6.QtWidgets import (QMainWindow, QStackedWidget, QWidget, QVBoxLayout,
+                                QLabel, QPushButton, QHBoxLayout, QMessageBox, QFrame,
+                                QLineEdit, QListWidget, QScrollArea, QDialog)
+from PySide6.QtCore import Qt, QTimer, Signal, Slot, QThreadPool
+from PySide6.QtGui import QPixmap
+from loguru import logger
+import jwt
+
 from api.server_monitor import ServerMonitor
 from image_loader import ImageLoader
+
+from modules.ui.header import HeaderWidget
+from modules.cache.image_cache import ImageCacheManager
+from modules.ui.cards import AnimeCard
+from modules.auth.auth import AuthSystem
+from modules.auth.auth_widget import AuthWidget
+from modules.ui.home import Home
+
+
 
 class AniPlayApp(QMainWindow):
     api_ready_signal = Signal(bool)
 
     def __init__(self):
         super().__init__()
-        #configura a janela principal
+        # Configura a janela principal
         self.setWindowTitle("AniPlay")
         self.resize(1200, 800)
 
-        #inicia o logger
+        # Inicia o logger
         self.setup_logger()
         logger.info("AniPlay iniciado")
 
-        #usuario/autenticacao
+        # Usuario/autenticacao
         self.auth_system = AuthSystem()
         self.current_user = None
         self.user_db = None
 
-        self.init_ui()
-
-        self.try_auto_login()
-
-        #inicia a API do Aniwatch
-        self.init_aniwatch_api()
-
-        self.api_ready_signal.connect(self.on_api_ready)
-
-        self.cache_dir = self.get_cache_directory()
-    
-        # 🔥 CORREÇÃO: Limpar completamente os caches em memória
-        self.poster_cache = {}
-        self.pending_images = set()
-        
-        # 🔥 CORREÇÃO: Verificar e limpar cache corrompido na inicialização
-        self.clean_corrupted_cache()
+        # Inicializar módulos
+        self.cache_manager = ImageCacheManager(self.auth_system)
         
         # Thread pool para carregamento de imagens
         self.thread_pool = QThreadPool()
         self.thread_pool.setMaxThreadCount(3)
-        
-        self.poster_cache = {}
-        self.pending_images = set()
 
-        cache_size = self.get_cache_size()
+        self.init_ui()
+        self.try_auto_login()
+
+        # Inicia a API do Aniwatch
+        self.init_aniwatch_api()
+
+        self.api_ready_signal.connect(self.on_api_ready)
+
+        cache_size = self.cache_manager.get_cache_size()
         cache_files_count = self.check_cache_files()
         logger.info(f"💾 Cache local: {cache_size:.2f} MB, {cache_files_count} arquivos")
-
-    def clean_corrupted_cache(self):
-        """Remove arquivos de cache corrompidos na inicialização"""
-        try:
-            for cache_file in self.cache_dir.glob("*.*"):
-                if cache_file.is_file():
-                    # Tenta carregar como QPixmap para verificar integridade
-                    pixmap = QPixmap(str(cache_file))
-                    if pixmap.isNull():
-                        logger.warning(f"🗑️ Removendo cache corrompido: {cache_file.name}")
-                        cache_file.unlink()
-        except Exception as e:
-            logger.warning(f"❌ Erro ao limpar cache corrompido: {e}")
 
     def check_cache_files(self):
         """Verifica quantos arquivos de cache existem (para debug)"""
         try:
-            cache_files = list(self.cache_dir.glob("*.*"))
+            cache_files = list(self.cache_manager.cache_dir.glob("*.*"))
             logger.info(f"📁 Arquivos no cache: {len(cache_files)}")
             
             # Lista os primeiros 5 arquivos para debug
@@ -100,80 +78,38 @@ class AniPlayApp(QMainWindow):
             logger.error(f"❌ Erro ao verificar cache: {e}")
             return 0
 
-    def get_cache_directory(self):
-        """Retorna o diretório de cache da aplicação (mesmo do banco de dados)"""
-        # Usa o mesmo diretório base do sistema de auth
-        app_data = self.auth_system.get_app_data_path()
-        cache_path = app_data / "cache" / "images"
-        
-        try:
-            cache_path.mkdir(parents=True, exist_ok=True)
-            logger.debug(f"✅ Cache directory: {cache_path}")
-            return cache_path
-        except Exception as e:
-            logger.error(f"❌ Erro ao criar diretório de cache {cache_path}: {e}")
-            # Fallback para o diretório do app
-            fallback_path = app_data / "images_cache"
-            fallback_path.mkdir(parents=True, exist_ok=True)
-            return fallback_path
-
-    def clear_old_cache(self, days_old=30):
-        """Limpa cache antigo (opcional)"""
-        try:
-            current_time = datetime.datetime.now().timestamp()
-            for file_path in self.cache_dir.glob("*.*"):
-                if file_path.is_file():
-                    # Verifica se o arquivo é mais antigo que days_old
-                    file_age = current_time - file_path.stat().st_mtime
-                    if file_age > days_old * 24 * 60 * 60:  # Converter dias para segundos
-                        file_path.unlink()
-                        logger.debug(f"🗑️ Cache antigo removido: {file_path}")
-        except Exception as e:
-            logger.warning(f"❌ Erro ao limpar cache: {e}")
-
-    def get_cache_size(self):
-        """Retorna o tamanho total do cache em MB"""
-        try:
-            total_size = 0
-            for file_path in self.cache_dir.glob("*.*"):
-                if file_path.is_file():
-                    total_size += file_path.stat().st_size
-            return total_size / (1024 * 1024)  # Converter para MB
-        except Exception as e:
-            logger.warning(f"❌ Erro ao calcular tamanho do cache: {e}")
-            return 0
-
     def load_anime_poster_async(self, anime_id, image_url, image_label):
+        """Carrega uma imagem de forma assíncrona com cache"""
         anime_id = str(anime_id).strip()
         
-        # Verifica se já está no cache de memória
-        if anime_id in self.poster_cache:
+        # 1. Cache de memória
+        if anime_id in self.cache_manager.poster_cache:
             logger.debug(f"✅ Imagem {anime_id} já em cache de memória")
-            pixmap = self.poster_cache[anime_id]
+            pixmap = self.cache_manager.poster_cache[anime_id]
             image_label.setPixmap(pixmap)
             image_label.setText("")
             return
         
-        # 🔥 CORREÇÃO: Verificar cache de disco de forma SÍNCRONA primeiro
-        cache_pixmap = self.load_from_cache_sync(anime_id, image_url)
+        # 2. Cache de disco (síncrono)
+        cache_pixmap = self.cache_manager.load_from_cache_sync(anime_id, image_url)
         if cache_pixmap:
             logger.debug(f"💾 Cache SÍNCRONO encontrado: {anime_id}")
-            self.poster_cache[anime_id] = cache_pixmap
+            self.cache_manager.poster_cache[anime_id] = cache_pixmap
             image_label.setPixmap(cache_pixmap)
             image_label.setText("")
             return
         
-        # Se já está carregando, apenas retorna
-        if anime_id in self.pending_images:
+        # 3. Download (assíncrono)
+        if anime_id in self.cache_manager.pending_images:
             logger.debug(f"⏳ ID {anime_id} já está sendo carregado")
             return
         
         # Marca como carregando
-        self.pending_images.add(anime_id)
+        self.cache_manager.pending_images.add(anime_id)
         logger.debug(f"🚀 Iniciando carregamento assíncrono: {anime_id}")
         
         # Cria o worker apenas para download (não para cache)
-        worker = ImageLoader(anime_id, image_url, self.cache_dir)
+        worker = ImageLoader(anime_id, image_url, self.cache_manager.cache_dir)
         
         # Conecta os sinais
         worker.signals.image_loaded.connect(
@@ -186,47 +122,14 @@ class AniPlayApp(QMainWindow):
         # Inicia o worker no thread pool
         self.thread_pool.start(worker)
 
-    def load_from_cache_sync(self, anime_id, image_url):
-        """Verifica o cache de disco de forma síncrona"""
-        try:
-            # Recria a lógica do ImageLoader.get_cache_path()
-            extension = Path(image_url).suffix.lower()
-            if extension not in [".jpg", ".jpeg", ".png", ".webp"]:
-                extension = ".jpg"
-            
-            cache_path = self.cache_dir / f"{anime_id}{extension}"
-            
-            if cache_path.exists():
-                # Verifica se o arquivo tem tamanho válido
-                file_size = cache_path.stat().st_size
-                if file_size < 1024:
-                    cache_path.unlink()
-                    return None
-                    
-                pixmap = QPixmap(str(cache_path))
-                if not pixmap.isNull():
-                    scaled_pixmap = pixmap.scaled(200, 280, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-                    logger.debug(f"✅ Cache síncrono válido: {cache_path.name}")
-                    return scaled_pixmap
-                else:
-                    cache_path.unlink()
-        except Exception as e:
-            logger.warning(f"❌ Erro ao carregar cache síncrono: {e}")
-        
-        return None
-
     def on_poster_loaded(self, anime_id, pixmap, image_label):
         """Chamado quando uma imagem é carregada com sucesso"""
-        # 🔥 CORREÇÃO: Verificar se estamos na thread principal
-        from PySide6.QtCore import QThread
-        logger.debug(f"🎯 Thread atual: {QThread.currentThread()}")
-        
         # Remove da lista de pendentes
-        if anime_id in self.pending_images:
-            self.pending_images.remove(anime_id)
+        if anime_id in self.cache_manager.pending_images:
+            self.cache_manager.pending_images.remove(anime_id)
         
         # Salva no cache
-        self.poster_cache[anime_id] = pixmap
+        self.cache_manager.poster_cache[anime_id] = pixmap
         
         # Atualiza a UI
         image_label.setPixmap(pixmap)
@@ -236,11 +139,9 @@ class AniPlayApp(QMainWindow):
 
     def on_poster_failed(self, anime_id, error, image_label):
         """Chamado quando falha ao carregar uma imagem"""
-        logger.debug(f"🎯 on_poster_failed chamado para: {anime_id}")
-        
         # Remove da lista de pendentes
-        if anime_id in self.pending_images:
-            self.pending_images.remove(anime_id)
+        if anime_id in self.cache_manager.pending_images:
+            self.cache_manager.pending_images.remove(anime_id)
         
         logger.warning(f"❌ Falha ao carregar poster {anime_id}: {error}")
         image_label.setText("🎬\nSem imagem")
@@ -250,14 +151,6 @@ class AniPlayApp(QMainWindow):
                 font-size: 12px;
             }
         """)
-    def retry_loading(self, anime_id, image_label):
-        """Tenta recarregar uma imagem que falhou"""
-        # Busca os dados do anime novamente (você precisará armazenar a URL)
-        if hasattr(self, 'current_anime_data'):
-            for anime in self.current_anime_data:
-                if str(anime["id"]) == anime_id:
-                    self.load_anime_poster_async(anime_id, anime.get("poster", ""), image_label)
-                    break
 
     def try_auto_login(self):
         try:
@@ -306,11 +199,14 @@ class AniPlayApp(QMainWindow):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(0)
 
-        # Header
-        header = self.create_header()
-        layout.addWidget(header)
+        # Header modularizado
+        self.header = HeaderWidget()
+        self.header.login_clicked.connect(self.show_auth_modal)
+        self.header.register_clicked.connect(self.show_auth_modal)
+        self.header.logout_clicked.connect(self.logout)
+        layout.addWidget(self.header)
 
-        # Seção de busca (igual ao HTML)
+        # Seção de busca
         search_section = self.create_search_section()
         layout.addWidget(search_section)
 
@@ -324,148 +220,6 @@ class AniPlayApp(QMainWindow):
         layout.addWidget(self.content_stack)
 
         main_widget.setLayout(layout)
-
-    def create_header(self):
-        header = QWidget()
-        header.setFixedHeight(60)
-        header.setStyleSheet("""
-            QWidget {
-                background: #2a2a2a;
-                border-radius: 10px;
-                padding: 15px;
-            }
-        """)
-
-        layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-
-        # Logo
-        logo = QLabel("🎬 AniPlay")
-        logo.setStyleSheet("""
-            QLabel {
-                font-size: 24px;
-                font-weight: bold;
-                color: #ff7b00;
-            }
-        """)
-
-        # Área do usuário
-        user_widget = QWidget()
-        user_layout = QHBoxLayout()
-        user_layout.setSpacing(10)
-
-        # Mensagem de boas-vindas (inicialmente hidden)
-        self.welcome_label = QLabel("Olá, <span style='color: #ff7b00; font-weight: bold;'>Usuário</span>!")
-        self.welcome_label.setStyleSheet("color: #ccc;")
-        self.welcome_label.hide()
-
-        # Botões de autenticação
-        self.login_btn = QPushButton("Entrar")
-        self.register_btn = QPushButton("Cadastrar")
-        self.logout_btn = QPushButton("Sair")
-        self.logout_btn.hide()
-
-        # Estilização dos botões (SEM transform)
-        button_style = """
-            QPushButton {
-                padding: 8px 16px;
-                border: none;
-                border-radius: 5px;
-                font-size: 14px;
-            }
-        """
-
-        self.login_btn.setStyleSheet(button_style + """
-            QPushButton {
-                background: transparent;
-                color: #ff7b00;
-                border: 1px solid #ff7b00;
-            }
-            QPushButton:hover {
-                background: #3a3a3a;
-            }
-        """)
-
-        self.register_btn.setStyleSheet(button_style + """
-            QPushButton {
-                background: #ff7b00;
-                color: white;
-            }
-            QPushButton:hover {
-                background: #ff9500;
-            }
-        """)
-
-        self.logout_btn.setStyleSheet(button_style + """
-            QPushButton {
-                background: transparent;
-                color: #ff7b00;
-                border: 1px solid #ff7b00;
-            }
-            QPushButton:hover {
-                background: #3a3a3a;
-            }
-        """)
-
-        user_layout.addWidget(self.welcome_label)
-        user_layout.addWidget(self.login_btn)
-        user_layout.addWidget(self.register_btn)
-        user_layout.addWidget(self.logout_btn)
-        user_layout.addStretch()
-
-        user_widget.setLayout(user_layout)
-
-        layout.addWidget(logo)
-        layout.addStretch()
-        layout.addWidget(user_widget)
-
-        header.setLayout(layout)
-        
-        # 🔥 CORREÇÃO: Conectar botões aos métodos corretos
-        self.login_btn.clicked.connect(self.show_auth_modal)
-        self.register_btn.clicked.connect(self.show_auth_modal)
-        self.logout_btn.clicked.connect(self.logout)
-        
-        return header
-
-    def show_auth_modal(self):
-        """Mostra o modal de autenticação (login/registro)"""
-        # Criar uma janela de diálogo modal
-        auth_dialog = QDialog(self)
-        auth_dialog.setWindowTitle("AniPlay - Autenticação")
-        auth_dialog.setModal(True)
-        auth_dialog.resize(400, 500)
-        auth_dialog.setStyleSheet("""
-            QDialog {
-                background: #2a2a2a;
-                border-radius: 10px;
-            }
-        """)
-        
-        # Criar o AuthWidget dentro do diálogo
-        auth_widget = AuthWidget(self.auth_system, lambda token: self.on_auth_success(token, auth_dialog))
-        
-        # Layout para o diálogo
-        layout = QVBoxLayout()
-        layout.addWidget(auth_widget)
-        auth_dialog.setLayout(layout)
-        
-        # Se o botão clicado foi "Cadastrar", já mostrar a aba de registro
-        sender = self.sender()
-        if sender == self.register_btn:
-            auth_widget.show_register()
-        else:
-            auth_widget.show_login()
-            
-        auth_dialog.exec()
-
-    def on_auth_success(self, token, auth_dialog):
-        """Chamado quando a autenticação é bem-sucedida"""
-        # Fechar o diálogo primeiro
-        auth_dialog.accept()
-        
-        # Processar o login
-        self.on_login_success(token)
 
     def create_search_section(self):
         section = QWidget()
@@ -644,109 +398,8 @@ class AniPlayApp(QMainWindow):
         self.loading_label.setText("Carregando" + "." * self.loading_dots)
 
     def create_anime_card(self, anime):
-        card = QFrame()
-        card.setFixedSize(200, 350)
-        card.setStyleSheet("""
-            QFrame {
-                background: #2a2a2a;
-                border-radius: 10px;
-                border: none;
-            }
-            QFrame:hover {
-                background: #3a3a3a;
-            }
-        """)
-
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-
-        # Imagem do anime
-        image_label = QLabel()
-        image_label.setFixedSize(200, 280)
-        image_label.setStyleSheet("""
-            QLabel {
-                background: #3a3a3a;
-                border-top-left-radius: 10px;
-                border-top-right-radius: 10px;
-                border: none;
-            }
-        """)
-        image_label.setAlignment(Qt.AlignCenter)
-        image_label.setScaledContents(False)  # IMPORTANTE: não escalar, pois já fazemos isso no loader
-        
-        # Texto placeholder enquanto a imagem carrega
-        image_label.setText("📺\nCarregando...")
-        image_label.setStyleSheet(image_label.styleSheet() + """
-            QLabel {
-                color: #888;
-                font-size: 12px;
-            }
-        """)
-
-        # Informações do anime
-        info_widget = QWidget()
-        info_widget.setStyleSheet("""
-            background: #2a2a2a; 
-            border-bottom-left-radius: 10px; 
-            border-bottom-right-radius: 10px;
-        """)
-        info_layout = QVBoxLayout()
-        info_layout.setContentsMargins(15, 15, 15, 15)
-        info_layout.setSpacing(5)
-
-        # Título
-        title = QLabel(anime["title"])
-        title.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                color: #fff;
-                line-height: 1.3;
-            }
-        """)
-        title.setWordWrap(True)
-        title.setFixedHeight(40)
-
-        # Detalhes
-        details = QLabel(f"Rank: #{anime['score']}")
-        details.setStyleSheet("font-size: 12px; color: #ccc;")
-
-        # Status
-        status = QLabel("Popular")
-        status.setStyleSheet("""
-            QLabel {
-                background: #ff7b00;
-                color: white;
-                padding: 2px 8px;
-                border-radius: 10px;
-                font-size: 10px;
-                max-width: 80px;
-            }
-        """)
-
-        info_layout.addWidget(title)
-        info_layout.addWidget(details)
-        info_layout.addWidget(status)
-        info_widget.setLayout(info_layout)
-
-        layout.addWidget(image_label)
-        layout.addWidget(info_widget)
-        card.setLayout(layout)
-
-        # Iniciar carregamento assíncrono da imagem
-        poster_url = anime.get("poster", "")
-        if poster_url:
-            self.load_anime_poster_async(anime["id"], poster_url, image_label)
-        else:
-            image_label.setText("🎬\nSem imagem")
-            image_label.setStyleSheet(image_label.styleSheet() + """
-                QLabel {
-                    color: #666;
-                    font-size: 12px;
-                }
-            """)
-
+        """Cria um card de anime usando o novo componente modular"""
+        card = AnimeCard(anime, self.load_anime_poster_async)
         return card
 
     def create_anime_section(self, title, animes):
@@ -890,11 +543,8 @@ class AniPlayApp(QMainWindow):
         """Atualiza a UI após o login bem-sucedido"""
         if self.current_user:
             username = self.current_user.get('username', 'Usuário')
-            self.welcome_label.setText(f"Olá, <span style='color: #ff7b00; font-weight: bold;'>{username}</span>!")
-            self.welcome_label.show()
-            self.login_btn.hide()
-            self.register_btn.hide()
-            self.logout_btn.show()
+            # Usa o método do header modularizado
+            self.header.update_user_info(username)
             self.profile_tab.show()
             
             # Atualizar conteúdo do perfil
@@ -906,7 +556,7 @@ class AniPlayApp(QMainWindow):
             username = self.current_user.get('username', 'Usuário')
             email = self.current_user.get('email', 'Não informado')
             
-            # 🔥 CORREÇÃO: Criar um novo widget para o perfil
+            # Criar um novo widget para o perfil
             new_profile_widget = QWidget()
             profile_layout = QVBoxLayout()
             profile_layout.setAlignment(Qt.AlignTop)
@@ -923,7 +573,7 @@ class AniPlayApp(QMainWindow):
             profile_layout.addWidget(user_info)
             new_profile_widget.setLayout(profile_layout)
             
-            # 🔥 CORREÇÃO: Substituir o widget no content_stack
+            # Substituir o widget no content_stack
             self.content_stack.removeWidget(self.profile_content)
             self.profile_content = new_profile_widget
             self.content_stack.insertWidget(2, self.profile_content)
@@ -946,11 +596,8 @@ class AniPlayApp(QMainWindow):
                 self.user_db.close()
                 self.user_db = None
             
-            # Resetar UI
-            self.welcome_label.hide()
-            self.login_btn.show()
-            self.register_btn.show()
-            self.logout_btn.hide()
+            # Resetar UI usando o header modularizado
+            self.header.update_user_info(None)
             self.profile_tab.hide()
             
             # Resetar conteúdo do perfil
@@ -982,6 +629,45 @@ class AniPlayApp(QMainWindow):
 
         layout.addWidget(message)
         self.profile_content.setLayout(layout)
+
+    def show_auth_modal(self):
+        """Mostra o modal de autenticação (login/registro)"""
+        # Criar uma janela de diálogo modal
+        auth_dialog = QDialog(self)
+        auth_dialog.setWindowTitle("AniPlay - Autenticação")
+        auth_dialog.setModal(True)
+        auth_dialog.resize(400, 500)
+        auth_dialog.setStyleSheet("""
+            QDialog {
+                background: #2a2a2a;
+                border-radius: 10px;
+            }
+        """)
+        
+        # Criar o AuthWidget dentro do diálogo
+        auth_widget = AuthWidget(self.auth_system, lambda token: self.on_auth_success(token, auth_dialog))
+        
+        # Layout para o diálogo
+        layout = QVBoxLayout()
+        layout.addWidget(auth_widget)
+        auth_dialog.setLayout(layout)
+        
+        # Se o botão clicado foi "Cadastrar", já mostrar a aba de registro
+        sender = self.sender()
+        if sender == self.header.register_btn:
+            auth_widget.show_register()
+        else:
+            auth_widget.show_login()
+            
+        auth_dialog.exec()
+
+    def on_auth_success(self, token, auth_dialog):
+        """Chamado quando a autenticação é bem-sucedida"""
+        # Fechar o diálogo primeiro
+        auth_dialog.accept()
+        
+        # Processar o login
+        self.on_login_success(token)
     
     def load_user_data(self):
         try:
@@ -1044,50 +730,17 @@ class AniPlayApp(QMainWindow):
             self.on_api_ready()
   
     def on_api_ready(self):
-        self.pending_images.clear()
+        self.cache_manager.pending_images.clear()
 
-        home_animes_data = get_animes_home_page()
-        trending_animes = home_animes_data["data"]["trendingAnimes"]
-        popular_animes = home_animes_data["data"]["mostPopularAnimes"]
-        recent_animes = home_animes_data["data"]["latestCompletedAnimes"]
-        
-        logger.info("✅ Dados dos animes obtidos com sucesso")
-
-        # Para animação
+         # Para animação
         self.loading_timer.stop()
         self.loading_label.hide()
 
-        # Limpa o layout antes de adicionar novas seções
-        for i in reversed(range(self.home_layout.count())):
-            widget = self.home_layout.itemAt(i).widget()
-            if widget:
-                widget.setParent(None)
-
-        # Converte os dados para o formato esperado pelo create_anime_section
-        def convert_anime_data(anime_list):
-            converted = []
-            for anime in anime_list:
-                converted.append({
-                    "title": anime.get("name", "Sem título"),
-                    "score": str(anime.get("rank", "N/A")),
-                    "status": "Em andamento",  # Você pode ajustar isso conforme os dados reais
-                    "poster": anime.get("poster", ""),
-                    "id": anime.get("id", "")
-                })
-            return converted
-
-        # Adiciona as seções com dados reais
-        trending_section = self.create_anime_section("🔥 Em Alta Agora", convert_anime_data(trending_animes))
-        popular_section = self.create_anime_section("⭐ Clássicos Populares", convert_anime_data(popular_animes))
-        recent_section = self.create_anime_section("🆕 Lançamentos Recentes", convert_anime_data(recent_animes))
-
-        self.home_layout.addWidget(trending_section)
-        self.home_layout.addWidget(popular_section)
-        self.home_layout.addWidget(recent_section)
+        home_sections = Home(self.home_layout, self.create_anime_section)
 
     def closeEvent(self, event):
         # Log do tamanho do cache ao fechar
-        cache_size = self.get_cache_size()
+        cache_size = self.cache_manager.get_cache_size()
         logger.info(f"💾 Cache final: {cache_size:.2f} MB")
         
         # Limpa o thread pool

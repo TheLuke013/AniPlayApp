@@ -6,8 +6,8 @@ from PySide6.QtGui import QPixmap
 from loguru import logger
 
 class ImageSignals(QObject):
-    image_loaded = Signal(str, QPixmap)  # anime_id, pixmap
-    image_failed = Signal(str, str)      # anime_id, error_message
+    image_loaded = Signal(str, QPixmap)
+    image_failed = Signal(str, str)
 
 class ImageLoader(QRunnable):
     def __init__(self, anime_id, image_url, cache_dir):
@@ -22,20 +22,17 @@ class ImageLoader(QRunnable):
         """Retorna o caminho do arquivo baseado no anime_id."""
         extension = Path(self.image_url).suffix.lower()
 
-        # Se a URL não tiver uma extensão confiável:
         if extension not in [".jpg", ".jpeg", ".png", ".webp"]:
             extension = ".jpg"
 
         return self.cache_dir / f"{self.anime_id}{extension}"
 
     def load_from_cache(self):
-        """Tenta carregar a imagem do cache local"""
         cache_path = self.get_cache_path()
         if cache_path.exists():
             try:
-                # Verifica se o arquivo tem tamanho válido
                 file_size = cache_path.stat().st_size
-                if file_size < 1024:  # Menos de 1KB provavelmente está corrompido
+                if file_size < 1024:
                     logger.warning(f"🗑️ Cache muito pequeno, removendo: {cache_path}")
                     cache_path.unlink()
                     return None
@@ -57,10 +54,9 @@ class ImageLoader(QRunnable):
         return None
 
     def save_to_cache(self, image_data):
-        """Salva a imagem no cache local"""
         try:
             cache_path = self.get_cache_path()
-            cache_path.parent.mkdir(parents=True, exist_ok=True)  # Cria diretório se não existir
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
             with open(cache_path, 'wb') as f:
                 f.write(image_data)
             logger.debug(f"💾 Imagem salva em cache: {cache_path}")
@@ -68,7 +64,6 @@ class ImageLoader(QRunnable):
             logger.warning(f"❌ Erro ao salvar cache {cache_path}: {e}")
 
     def run(self):
-        # Primeiro tenta carregar do cache
         cached_pixmap = self.load_from_cache()
         if cached_pixmap:
             logger.debug(f"💾 Cache HIT: {self.anime_id}")
@@ -78,12 +73,10 @@ class ImageLoader(QRunnable):
             cache_path = self.get_cache_path()
             logger.debug(f"💾 Cache MISS: {self.anime_id} - {cache_path}")
 
-        # Se não tem cache, baixa da internet
         try:
             logger.debug(f"🌐 Baixando: {self.anime_id} - {self.image_url}")
             response = requests.get(self.image_url, timeout=10)
             if response.status_code == 200:
-                # Salva no cache
                 self.save_to_cache(response.content)
                 
                 pixmap = QPixmap()
