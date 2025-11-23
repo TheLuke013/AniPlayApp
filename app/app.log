@@ -1,15 +1,10 @@
-2025-11-22 21:28:10.201 | INFO     | app:__init__:12 - AniPlay Application Started
-2025-11-22 21:39:22.884 | INFO     | app:__init__:15 - AniPlay Application Started
-2025-11-22 21:40:07.139 | INFO     | app:__init__:17 - AniPlay Application Started
-2025-11-22 21:40:07.140 | INFO     | app:init_aniwatch_api:28 - Inicializando Anime API...
-2025-11-22 21:40:07.141 | ERROR    | app:init_aniwatch_api:36 - Diretório não encontrado: C:\Development\AniPlayApp\app\aniwatch-api
-2025-11-22 21:40:33.544 | INFO     | app:__init__:17 - AniPlay Application Started
-2025-11-22 21:40:33.544 | INFO     | app:init_aniwatch_api:28 - Inicializando Anime API...
-2025-11-22 21:40:33.545 | INFO     | app:init_aniwatch_api:33 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-22 21:42:04.392 | INFO     | app:__init__:17 - AniPlay Application Started
-2025-11-22 21:42:04.392 | INFO     | app:init_aniwatch_api:28 - Inicializando Anime API...
-2025-11-22 21:42:04.393 | INFO     | app:init_aniwatch_api:33 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-22 21:49:33.443 | INFO     | app:__init__:18 - AniPlay Application Started
-2025-11-22 21:49:33.444 | INFO     | app:init_aniwatch_api:29 - Inicializando Anime API...
-2025-11-22 21:49:34.353 | INFO     | app:start_api:35 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-22 21:49:34.399 | INFO     | app:start_api:42 - ✅ Anime API iniciada em background
+2025-11-22 23:13:13.333 | INFO     | app:__init__:21 - AniPlay iniciado
+2025-11-22 23:13:13.334 | INFO     | app:init_aniwatch_api:81 - Inicializando Anime API...
+2025-11-22 23:13:13.336 | INFO     | app:start_api:87 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-22 23:13:13.342 | INFO     | auth.auth:setup_database:48 - Banco de dados de usuários inicializado
+2025-11-22 23:13:13.342 | INFO     | auth.auth:__init__:18 - ✅ Sistema de auth inicializado com SHA256
+2025-11-22 23:13:13.343 | INFO     | app:start_api:93 - Anime API iniciada em background
+2025-11-22 23:13:13.364 | WARNING  | auth.auth:__init__:25 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
+2025-11-22 23:13:13.368 | INFO     | auth.auth:setup_database:48 - Banco de dados de usuários inicializado
+2025-11-22 23:13:26.951 | INFO     | auth.auth:login_user:149 - Login bem-sucedido: TheLuke013
+2025-11-22 23:13:26.954 | INFO     | app:on_login_success:54 - Usuário TheLuke013 logado com sucesso
