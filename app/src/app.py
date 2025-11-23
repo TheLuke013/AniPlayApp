@@ -4,6 +4,7 @@ from pathlib import Path
 import threading
 import sqlite3
 import datetime
+import json
 
 from PySide6.QtWidgets import (QMainWindow, QStackedWidget, QWidget, QVBoxLayout,
                                 QLabel, QPushButton, QHBoxLayout, QMessageBox, QFrame,
@@ -16,14 +17,15 @@ import jwt
 from api.server_monitor import ServerMonitor
 from image_loader import ImageLoader
 
+from modules.anime.anime import convert_anime_data
+from modules.anime.anime_data import get_search_anime
 from modules.ui.header import HeaderWidget
 from modules.cache.image_cache import ImageCacheManager
 from modules.ui.cards import AnimeCard
 from modules.auth.auth import AuthSystem
 from modules.auth.auth_widget import AuthWidget
 from modules.ui.home import Home
-
-
+from modules.anime.anime_data import get_animes_home_page
 
 class AniPlayApp(QMainWindow):
     api_ready_signal = Signal(bool)
@@ -61,6 +63,8 @@ class AniPlayApp(QMainWindow):
         cache_size = self.cache_manager.get_cache_size()
         cache_files_count = self.check_cache_files()
         logger.info(f"💾 Cache local: {cache_size:.2f} MB, {cache_files_count} arquivos")
+
+        self.current_search = None
 
     def check_cache_files(self):
         """Verifica quantos arquivos de cache existem (para debug)"""
@@ -270,6 +274,8 @@ class AniPlayApp(QMainWindow):
             }
         """)
 
+        self.search_btn.clicked.connect(self.search_anime)
+
         search_layout.addStretch()
         search_layout.addWidget(self.search_input)
         search_layout.addWidget(self.search_btn)
@@ -281,6 +287,167 @@ class AniPlayApp(QMainWindow):
 
         section.setLayout(layout)
         return section
+
+    def search_anime(self):
+        text = self.search_input.text().strip()
+
+        if len(text) >= 3:
+            logger.info(f"🔍 Iniciando busca por: {text}")
+            
+            # Muda para a aba de busca automaticamente
+            self.show_tab('search')
+            
+            # Limpa resultados anteriores
+            self.clear_search_results()
+            
+            # Remove a mensagem "Digite algo..."
+            self.hide_search_placeholder()
+
+            search_anime_data = get_search_anime(text)
+            if search_anime_data is None:
+                logger.error(f"❌ Nenhum anime chamado {text} foi encontrado na busca.")
+                self.show_no_results_message()
+                return
+            
+            anime_results = search_anime_data["data"]["animes"]
+            total_pages = search_anime_data["data"]["totalPages"]
+            current_page = search_anime_data["data"]["currentPage"]
+            
+            # Armazena informações da busca atual
+            self.current_search = {
+                "term": text,
+                "page": current_page,
+                "total_pages": total_pages
+            }
+            
+            if anime_results:
+                results_section = self.create_anime_section("Resultados", convert_anime_data(anime_results))
+                self.search_content_layout.addWidget(results_section)  # CORREÇÃO AQUI
+                
+                # Adiciona controles de paginação se houver mais de uma página
+                if total_pages > 1:
+                    self.add_pagination_controls()
+            else:
+                self.show_no_results_message()
+
+    def clear_search_results(self):
+        """Remove todos os resultados anteriores da busca"""
+        layout = self.search_content_layout  # Agora usa o layout direto
+        if layout:
+            # Remove todos os widgets exceto o primeiro (mensagem placeholder)
+            while layout.count() > 1:
+                item = layout.takeAt(1)
+                if item.widget():
+                    item.widget().deleteLater()
+
+    def hide_search_placeholder(self):
+        """Esconde a mensagem 'Digite algo...'"""
+        layout = self.search_content_layout
+        if layout and layout.count() > 0:
+            widget = layout.itemAt(0).widget()
+            if widget and isinstance(widget, QLabel):
+                widget.hide()
+
+    def show_search_placeholder(self):
+        """Mostra a mensagem 'Digite algo...'"""
+        layout = self.search_content_layout
+        if layout and layout.count() > 0:
+            widget = layout.itemAt(0).widget()
+            if widget and isinstance(widget, QLabel):
+                widget.show()
+
+    def show_no_results_message(self):
+        """Mostra mensagem quando não há resultados"""
+        no_results_label = QLabel("Nenhum resultado encontrado para sua busca.")
+        no_results_label.setStyleSheet("""
+            QLabel {
+                text-align: center;
+                color: #888;
+                padding: 40px;
+                font-size: 16px;
+            }
+        """)
+        no_results_label.setAlignment(Qt.AlignCenter)
+        self.search_content_layout.addWidget(no_results_label)  # Usa o layout direto
+
+    def add_pagination_controls(self):
+        """Adiciona controles de paginação"""
+        pagination_widget = QWidget()
+        pagination_layout = QHBoxLayout()
+        pagination_layout.setAlignment(Qt.AlignCenter)
+        
+        # Botão página anterior
+        prev_btn = QPushButton("← Anterior")
+        prev_btn.setStyleSheet("""
+            QPushButton {
+                padding: 8px 16px;
+                background: #3a3a3a;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            QPushButton:hover:enabled {
+                background: #ff7b00;
+            }
+            QPushButton:disabled {
+                background: #2a2a2a;
+                color: #666;
+            }
+        """)
+        
+        # Label da página atual
+        page_label = QLabel(f"Página {self.current_search['page']} de {self.current_search['total_pages']}")
+        page_label.setStyleSheet("color: white; padding: 0 15px;")
+        
+        # Botão próxima página
+        next_btn = QPushButton("Próxima →")
+        next_btn.setStyleSheet(prev_btn.styleSheet())
+        
+        # Desabilitar botões quando necessário
+        if self.current_search['page'] <= 1:
+            prev_btn.setEnabled(False)
+        if self.current_search['page'] >= self.current_search['total_pages']:
+            next_btn.setEnabled(False)
+        
+        # Conectar botões
+        prev_btn.clicked.connect(lambda: self.change_page(-1))
+        next_btn.clicked.connect(lambda: self.change_page(1))
+        
+        pagination_layout.addWidget(prev_btn)
+        pagination_layout.addWidget(page_label)
+        pagination_layout.addWidget(next_btn)
+        pagination_widget.setLayout(pagination_layout)
+        
+        self.search_content_layout.addWidget(pagination_widget)  # Usa o layout direto
+
+    def change_page(self, direction):
+        """Muda para a página anterior ou próxima"""
+        if not hasattr(self, 'current_search'):
+            return
+        
+        new_page = self.current_search['page'] + direction
+        
+        # Verifica se a página é válida
+        if 1 <= new_page <= self.current_search['total_pages']:
+            # Atualiza a busca com a nova página
+            search_anime_data = get_search_anime(self.current_search['term'], new_page)
+            
+            if search_anime_data and search_anime_data["data"]["animes"]:
+                # Limpa resultados anteriores
+                self.clear_search_results()
+                self.hide_search_placeholder()
+                
+                # Atualiza informações da busca atual
+                self.current_search['page'] = new_page
+                
+                # Mostra novos resultados
+                anime_results = search_anime_data["data"]["animes"]
+                results_section = self.create_anime_section("Resultados", convert_anime_data(anime_results))
+                self.search_content_layout.addWidget(results_section)  # CORREÇÃO AQUI
+                
+                # Adiciona controles de paginação atualizados
+                self.add_pagination_controls()
 
     def create_tabs(self):
         tabs_widget = QWidget()
@@ -463,10 +630,21 @@ class AniPlayApp(QMainWindow):
         return section
 
     def create_search_tab(self):
-        content = QWidget()
-        layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignCenter)
-
+        # Widget de scroll para a aba de busca
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("""
+            QScrollArea {
+                border: none;
+                background: transparent;
+            }
+        """)
+        
+        # Widget de conteúdo - AGORA É ATRIBUTO DA CLASSE
+        self.search_content_widget = QWidget()  # Mudei para atributo da classe
+        self.search_content_layout = QVBoxLayout()  # Também como atributo
+        self.search_content_layout.setAlignment(Qt.AlignTop)
+        
         message = QLabel("🔍 Digite algo na busca para encontrar animes")
         message.setStyleSheet("""
             QLabel {
@@ -476,10 +654,13 @@ class AniPlayApp(QMainWindow):
                 font-size: 16px;
             }
         """)
+        message.setAlignment(Qt.AlignCenter)
 
-        layout.addWidget(message)
-        content.setLayout(layout)
-        return content
+        self.search_content_layout.addWidget(message)
+        self.search_content_widget.setLayout(self.search_content_layout)
+        scroll.setWidget(self.search_content_widget)
+        
+        return scroll
 
     def create_profile_tab(self):
         content = QWidget()

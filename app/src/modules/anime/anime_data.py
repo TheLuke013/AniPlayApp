@@ -9,7 +9,7 @@ def get_search_anime(search, page=1):
         
         if response.status_code == 200:
             data = response.json()
-            logger.info(f"✅ Dados dos animes obtidos com sucesso")
+            logger.info(f"✅ Dados dos animes obtidos com sucesso - Página {page}")
             return data
         else:
             logger.error(f"❌ Erro na API: {response.status_code} - {response.text}")

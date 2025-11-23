@@ -1,4 +1,5 @@
 from loguru import logger
+from modules.anime.anime import convert_anime_data
 from modules.anime.anime_data import get_animes_home_page
 import json
 
@@ -20,18 +21,6 @@ class Home():
             widget = home_layout.itemAt(i).widget()
             if widget:
                 widget.setParent(None)
-
-        def convert_anime_data(anime_list):
-            converted = []
-            for anime in anime_list:
-                converted.append({
-                    "title": anime.get("name", "Sem título"),
-                    "score": str(anime.get("rank", "N/A")),
-                    "status": "Em andamento",
-                    "poster": anime.get("poster", ""),
-                    "id": anime.get("id", "")
-                })
-            return converted
 
         spotlight_section = create_anime_section("Animes em Destaque", convert_anime_data(spotlight_animes))
         trending_section = create_anime_section("Animes em Alta", convert_anime_data(trending_animes))

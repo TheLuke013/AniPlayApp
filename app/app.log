@@ -1,136 +1,423 @@
-2025-11-23 20:14:51.690 | INFO     | app:__init__:39 - AniPlay iniciado
-2025-11-23 20:14:51.698 | INFO     | modules.auth.auth:setup_database:46 - Banco de dados de usuários inicializado
-2025-11-23 20:14:51.698 | INFO     | modules.auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
-2025-11-23 20:14:51.719 | WARNING  | modules.auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
-2025-11-23 20:14:51.720 | DEBUG    | modules.cache.image_cache:get_cache_directory:21 - ✅ Cache directory: C:\Users\Luke\AppData\Local\AniPlay\cache\images
-2025-11-23 20:14:51.746 | INFO     | modules.auth.auth:load_session:265 - ✅ Sessão carregada para usuário TheLuke013
-2025-11-23 20:14:51.747 | INFO     | app:try_auto_login:160 - 🎯 Tentando login automático para usuário ID: 1
-2025-11-23 20:14:51.749 | INFO     | app:load_user_data:685 - 🎨 Preferências carregadas: dark, pt-BR
-2025-11-23 20:14:51.752 | INFO     | app:on_login_success:189 - ⚡ Login automático bem-sucedido: TheLuke013
-2025-11-23 20:14:51.752 | INFO     | app:init_aniwatch_api:701 - Inicializando Anime API...
-2025-11-23 20:14:51.754 | INFO     | app:start_api:707 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
-2025-11-23 20:14:51.759 | INFO     | app:start_api:713 - 🚀 Processo da API iniciado
-2025-11-23 20:14:51.765 | INFO     | app:check_cache_files:69 - 📁 Arquivos no cache: 44
-2025-11-23 20:14:51.769 | DEBUG    | app:check_cache_files:74 -   1. alma-chan-wants-to-have-a-family-19888.jpg (26.7 KB)
-2025-11-23 20:14:51.769 | DEBUG    | app:check_cache_files:74 -   2. attack-on-titan-112.jpg (97.8 KB)
-2025-11-23 20:14:51.769 | DEBUG    | app:check_cache_files:74 -   3. black-clover-2404.jpg (110.5 KB)
-2025-11-23 20:14:51.770 | DEBUG    | app:check_cache_files:74 -   4. bleach-806.jpg (24.0 KB)
-2025-11-23 20:14:51.770 | DEBUG    | app:check_cache_files:74 -   5. campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg (45.3 KB)
-2025-11-23 20:14:51.770 | INFO     | app:__init__:63 - 💾 Cache local: 3.08 MB, 44 arquivos
-2025-11-23 20:14:54.163 | INFO     | api.server_monitor:check_server:19 - ✅ Servidor da API está pronto!
-2025-11-23 20:14:55.143 | INFO     | modules.anime.anime_data:get_animes_home_page:30 - ✅ Dados dos animes obtidos com sucesso
-2025-11-23 20:14:55.150 | INFO     | modules.ui.home:__init__:17 - ✅ Dados dos animes obtidos com sucesso
-2025-11-23 20:14:55.199 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-punch-man-season-3-19932.jpg
-2025-11-23 20:14:55.200 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: one-punch-man-season-3-19932
-2025-11-23 20:14:55.212 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-hero-academia-final-season-19930.jpg
-2025-11-23 20:14:55.213 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: my-hero-academia-final-season-19930
-2025-11-23 20:14:55.219 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-banished-court-magician-aims-to-become-the-strongest-19902.jpg
-2025-11-23 20:14:55.219 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-banished-court-magician-aims-to-become-the-strongest-19902
-2025-11-23 20:14:55.225 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908.jpg
-2025-11-23 20:14:55.225 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908
-2025-11-23 20:14:55.235 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hero-without-a-class-who-even-needs-skills-19912.jpg
-2025-11-23 20:14:55.236 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: hero-without-a-class-who-even-needs-skills-19912
-2025-11-23 20:14:55.242 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg
-2025-11-23 20:14:55.242 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928
-2025-11-23 20:14:55.253 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-status-as-an-assassin-obviously-exceeds-the-heros-19922.jpg
-2025-11-23 20:14:55.254 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: my-status-as-an-assassin-obviously-exceeds-the-heros-19922
-2025-11-23 20:14:55.265 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-piece-100.jpg
-2025-11-23 20:14:55.265 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: one-piece-100
-2025-11-23 20:14:55.325 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
-2025-11-23 20:14:55.328 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908 já em cache de memória
-2025-11-23 20:14:55.333 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-punch-man-season-3-19932 já em cache de memória
-2025-11-23 20:14:55.345 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: spy-x-family-season-3-19931.jpg
-2025-11-23 20:14:55.345 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: spy-x-family-season-3-19931
-2025-11-23 20:14:55.349 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-hero-academia-final-season-19930 já em cache de memória
-2025-11-23 20:14:55.360 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: dusk-beyond-the-end-of-the-world-19905.jpg
-2025-11-23 20:14:55.361 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: dusk-beyond-the-end-of-the-world-19905
-2025-11-23 20:14:55.364 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem hero-without-a-class-who-even-needs-skills-19912 já em cache de memória
-2025-11-23 20:14:55.366 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928 já em cache de memória
-2025-11-23 20:14:55.369 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem the-banished-court-magician-aims-to-become-the-strongest-19902 já em cache de memória
-2025-11-23 20:14:55.372 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-status-as-an-assassin-obviously-exceeds-the-heros-19922 já em cache de memória
-2025-11-23 20:14:55.463 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hands-off-sawaranaide-kotesashi-kun-uncensored-19943.jpg
-2025-11-23 20:14:55.464 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: hands-off-sawaranaide-kotesashi-kun-uncensored-19943
-2025-11-23 20:14:55.472 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: renegade-immortal-18573.jpg
-2025-11-23 20:14:55.472 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: renegade-immortal-18573
-2025-11-23 20:14:55.480 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-fated-magical-princess-who-made-me-a-princess-19875.jpg
-2025-11-23 20:14:55.480 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-fated-magical-princess-who-made-me-a-princess-19875
-2025-11-23 20:14:55.487 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hands-off-sawaranaide-kotesashi-kun-19896.jpg
-2025-11-23 20:14:55.488 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: hands-off-sawaranaide-kotesashi-kun-19896
-2025-11-23 20:14:55.493 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-piece-wano-kuni-sp-18217.jpg
-2025-11-23 20:14:55.494 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: one-piece-wano-kuni-sp-18217
-2025-11-23 20:14:55.497 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-punch-man-season-3-19932 já em cache de memória
-2025-11-23 20:14:55.508 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: gachiakuta-19785.jpg
-2025-11-23 20:14:55.508 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: gachiakuta-19785
-2025-11-23 20:14:55.518 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: dad-is-a-hero-mom-is-a-spirit-im-a-reincarnator-19911.jpg
-2025-11-23 20:14:55.519 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: dad-is-a-hero-mom-is-a-spirit-im-a-reincarnator-19911
-2025-11-23 20:14:55.524 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: alma-chan-wants-to-have-a-family-19888.jpg
-2025-11-23 20:14:55.525 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: alma-chan-wants-to-have-a-family-19888
-2025-11-23 20:14:55.530 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: mechanical-marie-19900.jpg
-2025-11-23 20:14:55.530 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: mechanical-marie-19900
-2025-11-23 20:14:55.607 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: otherworldly-munchkin-lets-speedrun-the-dungeon-with-only-1-hp-19910.jpg
-2025-11-23 20:14:55.607 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: otherworldly-munchkin-lets-speedrun-the-dungeon-with-only-1-hp-19910
-2025-11-23 20:14:55.615 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: jochum-season-2-19880.jpg
-2025-11-23 20:14:55.615 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: jochum-season-2-19880
-2025-11-23 20:14:55.622 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: record-of-ragnarok-iii-19879.jpg
-2025-11-23 20:14:55.622 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: record-of-ragnarok-iii-19879
-2025-11-23 20:14:55.628 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-man-from-dao-xiang-cun-19873.jpg
-2025-11-23 20:14:55.628 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-man-from-dao-xiang-cun-19873
-2025-11-23 20:14:55.634 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: golden-kamuy-the-lightning-bandit-and-ogin-the-viperlong-tailed-tit-19870.jpg
-2025-11-23 20:14:55.634 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: golden-kamuy-the-lightning-bandit-and-ogin-the-viperlong-tailed-tit-19870
-2025-11-23 20:14:55.640 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: zombie-land-saga-movie-19869.jpg
-2025-11-23 20:14:55.641 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: zombie-land-saga-movie-19869
-2025-11-23 20:14:55.647 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: golden-kamuy-sapporo-beer-koujou-hen-19868.jpg
-2025-11-23 20:14:55.647 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: golden-kamuy-sapporo-beer-koujou-hen-19868
-2025-11-23 20:14:55.653 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: girls-band-cry-movie-19867.jpg
-2025-11-23 20:14:55.653 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: girls-band-cry-movie-19867
-2025-11-23 20:14:55.663 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: scarlet-19866.jpg
-2025-11-23 20:14:55.663 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: scarlet-19866
-2025-11-23 20:14:55.669 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: love-live-nijigasaki-high-school-idol-club-final-chapter-part-2-19865.jpg
-2025-11-23 20:14:55.670 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: love-live-nijigasaki-high-school-idol-club-final-chapter-part-2-19865
-2025-11-23 20:14:55.744 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
-2025-11-23 20:14:55.747 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem gachiakuta-19785 já em cache de memória
-2025-11-23 20:14:55.758 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: case-closed-323.jpg
-2025-11-23 20:14:55.759 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: case-closed-323
-2025-11-23 20:14:55.762 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem my-hero-academia-final-season-19930 já em cache de memória
-2025-11-23 20:14:55.768 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: no-longer-allowed-in-another-world-19247.jpg
-2025-11-23 20:14:55.768 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: no-longer-allowed-in-another-world-19247
-2025-11-23 20:14:55.771 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
-2025-11-23 20:14:55.780 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: naruto-shippuden-355.jpg
-2025-11-23 20:14:55.780 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: naruto-shippuden-355
-2025-11-23 20:14:55.786 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: bleach-806.jpg
-2025-11-23 20:14:55.786 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: bleach-806
-2025-11-23 20:14:55.796 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: black-clover-2404.jpg
-2025-11-23 20:14:55.797 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: black-clover-2404
-2025-11-23 20:14:55.802 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: solo-leveling-season-2-arise-from-the-shadow-19413.jpg
-2025-11-23 20:14:55.803 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: solo-leveling-season-2-arise-from-the-shadow-19413
-2025-11-23 20:14:55.865 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
-2025-11-23 20:14:55.867 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem naruto-shippuden-355 já em cache de memória
-2025-11-23 20:14:55.870 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem bleach-806 já em cache de memória
-2025-11-23 20:14:55.872 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem black-clover-2404 já em cache de memória
-2025-11-23 20:14:55.875 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem solo-leveling-season-2-arise-from-the-shadow-19413 já em cache de memória
-2025-11-23 20:14:55.908 | DEBUG    | app:load_anime_poster_async:87 - ✅ Imagem one-piece-100 já em cache de memória
-2025-11-23 20:14:55.917 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: jujutsu-kaisen-tv-534.jpg
-2025-11-23 20:14:55.918 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: jujutsu-kaisen-tv-534
-2025-11-23 20:14:55.928 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: chainsaw-man-17406.jpg
-2025-11-23 20:14:55.928 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: chainsaw-man-17406
-2025-11-23 20:14:55.941 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056.png
-2025-11-23 20:14:55.941 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056
-2025-11-23 20:14:55.951 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: attack-on-titan-112.jpg
-2025-11-23 20:14:55.951 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: attack-on-titan-112
-2025-11-23 20:14:55.987 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-fragrant-flower-blooms-with-dignity-19789.jpg
-2025-11-23 20:14:55.987 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: the-fragrant-flower-blooms-with-dignity-19789
-2025-11-23 20:14:55.997 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-5388.jpg
-2025-11-23 20:14:55.998 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-5388
-2025-11-23 20:14:56.007 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-specials-6009.jpg
-2025-11-23 20:14:56.007 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-specials-6009
-2025-11-23 20:14:56.018 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: sylvanian-families-magic-tricks-and-other-adventures-11891.jpg
-2025-11-23 20:14:56.018 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: sylvanian-families-magic-tricks-and-other-adventures-11891
-2025-11-23 20:14:56.025 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: umi-monogatari-seeing-amamiko-island-with-kanon-7920.jpg
-2025-11-23 20:14:56.025 | DEBUG    | app:load_anime_poster_async:96 - 💾 Cache SÍNCRONO encontrado: umi-monogatari-seeing-amamiko-island-with-kanon-7920
-2025-11-23 20:15:19.840 | INFO     | modules.auth.auth:clear_session:285 - ✅ Sessão removida
-2025-11-23 20:15:19.858 | INFO     | app:logout:607 - 👋 Usuário fez logout
-2025-11-23 20:15:30.471 | INFO     | modules.auth.auth:login_user:147 - Login bem-sucedido: TheLuke013
-2025-11-23 20:15:30.492 | INFO     | modules.auth.auth:save_session:237 - ✅ Sessão salva para usuário 1
-2025-11-23 20:15:30.493 | INFO     | app:load_user_data:685 - 🎨 Preferências carregadas: dark, pt-BR
-2025-11-23 20:15:30.495 | INFO     | app:on_login_success:191 - ✅ Login bem-sucedido: TheLuke013
-2025-11-23 20:15:31.995 | INFO     | app:closeEvent:744 - 💾 Cache final: 3.08 MB
+2025-11-23 20:50:39.282 | INFO     | app:__init__:41 - AniPlay iniciado
+2025-11-23 20:50:39.288 | INFO     | modules.auth.auth:setup_database:46 - Banco de dados de usuários inicializado
+2025-11-23 20:50:39.289 | INFO     | modules.auth.auth:__init__:19 - ✅ Sistema de auth inicializado com SHA256
+2025-11-23 20:50:39.310 | WARNING  | modules.auth.auth:__init__:26 - bcrypt não disponível: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72]), usando sha256_crypt
+2025-11-23 20:50:39.311 | DEBUG    | modules.cache.image_cache:get_cache_directory:21 - ✅ Cache directory: C:\Users\Luke\AppData\Local\AniPlay\cache\images
+2025-11-23 20:50:39.394 | INFO     | modules.auth.auth:load_session:265 - ✅ Sessão carregada para usuário TheLuke013
+2025-11-23 20:50:39.400 | INFO     | app:try_auto_login:164 - 🎯 Tentando login automático para usuário ID: 1
+2025-11-23 20:50:39.402 | INFO     | app:load_user_data:866 - 🎨 Preferências carregadas: dark, pt-BR
+2025-11-23 20:50:39.405 | INFO     | app:on_login_success:193 - ⚡ Login automático bem-sucedido: TheLuke013
+2025-11-23 20:50:39.405 | INFO     | app:init_aniwatch_api:882 - Inicializando Anime API...
+2025-11-23 20:50:39.406 | INFO     | app:start_api:888 - Executando npm start em: C:\Development\AniPlayApp\aniwatch-api
+2025-11-23 20:50:39.416 | INFO     | app:start_api:894 - 🚀 Processo da API iniciado
+2025-11-23 20:50:39.431 | INFO     | app:check_cache_files:73 - 📁 Arquivos no cache: 63
+2025-11-23 20:50:39.431 | DEBUG    | app:check_cache_files:78 -   1. alma-chan-wants-to-have-a-family-19888.jpg (26.7 KB)
+2025-11-23 20:50:39.432 | DEBUG    | app:check_cache_files:78 -   2. attack-on-titan-112.jpg (97.8 KB)
+2025-11-23 20:50:39.432 | DEBUG    | app:check_cache_files:78 -   3. black-clover-2404.jpg (110.5 KB)
+2025-11-23 20:50:39.432 | DEBUG    | app:check_cache_files:78 -   4. bleach-806.jpg (24.0 KB)
+2025-11-23 20:50:39.432 | DEBUG    | app:check_cache_files:78 -   5. campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg (45.3 KB)
+2025-11-23 20:50:39.433 | INFO     | app:__init__:65 - 💾 Cache local: 4.90 MB, 63 arquivos
+2025-11-23 20:50:41.532 | INFO     | api.server_monitor:check_server:19 - ✅ Servidor da API está pronto!
+2025-11-23 20:50:42.381 | INFO     | modules.anime.anime_data:get_animes_home_page:30 - ✅ Dados dos animes obtidos com sucesso
+2025-11-23 20:50:42.382 | INFO     | modules.ui.home:__init__:18 - ✅ Dados dos animes obtidos com sucesso
+2025-11-23 20:50:42.410 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-punch-man-season-3-19932.jpg
+2025-11-23 20:50:42.410 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: one-punch-man-season-3-19932
+2025-11-23 20:50:42.424 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-hero-academia-final-season-19930.jpg
+2025-11-23 20:50:42.424 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: my-hero-academia-final-season-19930
+2025-11-23 20:50:42.431 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-banished-court-magician-aims-to-become-the-strongest-19902.jpg
+2025-11-23 20:50:42.431 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: the-banished-court-magician-aims-to-become-the-strongest-19902
+2025-11-23 20:50:42.438 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908.jpg
+2025-11-23 20:50:42.439 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908
+2025-11-23 20:50:42.451 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hero-without-a-class-who-even-needs-skills-19912.jpg
+2025-11-23 20:50:42.451 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: hero-without-a-class-who-even-needs-skills-19912
+2025-11-23 20:50:42.460 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928.jpg
+2025-11-23 20:50:42.461 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928
+2025-11-23 20:50:42.476 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: my-status-as-an-assassin-obviously-exceeds-the-heros-19922.jpg
+2025-11-23 20:50:42.476 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: my-status-as-an-assassin-obviously-exceeds-the-heros-19922
+2025-11-23 20:50:42.491 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-piece-100.jpg
+2025-11-23 20:50:42.492 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: one-piece-100
+2025-11-23 20:50:42.560 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:50:42.564 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem my-gift-lvl-9999-unlimited-gacha-backstabbed-in-a-backwater-dungeon-im-out-for-revenge-19908 já em cache de memória
+2025-11-23 20:50:42.567 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-punch-man-season-3-19932 já em cache de memória
+2025-11-23 20:50:42.577 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: spy-x-family-season-3-19931.jpg
+2025-11-23 20:50:42.578 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: spy-x-family-season-3-19931
+2025-11-23 20:50:42.581 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem my-hero-academia-final-season-19930 já em cache de memória
+2025-11-23 20:50:42.591 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: dusk-beyond-the-end-of-the-world-19905.jpg
+2025-11-23 20:50:42.591 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: dusk-beyond-the-end-of-the-world-19905
+2025-11-23 20:50:42.594 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem hero-without-a-class-who-even-needs-skills-19912 já em cache de memória
+2025-11-23 20:50:42.596 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem campfire-cooking-in-another-world-with-my-absurd-skill-season-2-19928 já em cache de memória
+2025-11-23 20:50:42.599 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem the-banished-court-magician-aims-to-become-the-strongest-19902 já em cache de memória
+2025-11-23 20:50:42.602 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem my-status-as-an-assassin-obviously-exceeds-the-heros-19922 já em cache de memória
+2025-11-23 20:50:42.672 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hands-off-sawaranaide-kotesashi-kun-uncensored-19943.jpg
+2025-11-23 20:50:42.672 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: hands-off-sawaranaide-kotesashi-kun-uncensored-19943
+2025-11-23 20:50:42.678 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: renegade-immortal-18573.jpg
+2025-11-23 20:50:42.678 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: renegade-immortal-18573
+2025-11-23 20:50:42.684 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-fated-magical-princess-who-made-me-a-princess-19875.jpg
+2025-11-23 20:50:42.684 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: the-fated-magical-princess-who-made-me-a-princess-19875
+2025-11-23 20:50:42.690 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: hands-off-sawaranaide-kotesashi-kun-19896.jpg
+2025-11-23 20:50:42.690 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: hands-off-sawaranaide-kotesashi-kun-19896
+2025-11-23 20:50:42.695 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: one-piece-wano-kuni-sp-18217.jpg
+2025-11-23 20:50:42.695 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: one-piece-wano-kuni-sp-18217
+2025-11-23 20:50:42.698 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-punch-man-season-3-19932 já em cache de memória
+2025-11-23 20:50:42.708 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: gachiakuta-19785.jpg
+2025-11-23 20:50:42.709 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: gachiakuta-19785
+2025-11-23 20:50:42.719 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: dad-is-a-hero-mom-is-a-spirit-im-a-reincarnator-19911.jpg
+2025-11-23 20:50:42.719 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: dad-is-a-hero-mom-is-a-spirit-im-a-reincarnator-19911
+2025-11-23 20:50:42.725 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: alma-chan-wants-to-have-a-family-19888.jpg
+2025-11-23 20:50:42.725 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: alma-chan-wants-to-have-a-family-19888
+2025-11-23 20:50:42.731 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: mechanical-marie-19900.jpg
+2025-11-23 20:50:42.731 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: mechanical-marie-19900
+2025-11-23 20:50:42.801 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: otherworldly-munchkin-lets-speedrun-the-dungeon-with-only-1-hp-19910.jpg
+2025-11-23 20:50:42.808 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: otherworldly-munchkin-lets-speedrun-the-dungeon-with-only-1-hp-19910
+2025-11-23 20:50:42.815 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: jochum-season-2-19880.jpg
+2025-11-23 20:50:42.815 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: jochum-season-2-19880
+2025-11-23 20:50:42.822 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: record-of-ragnarok-iii-19879.jpg
+2025-11-23 20:50:42.822 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: record-of-ragnarok-iii-19879
+2025-11-23 20:50:42.828 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-man-from-dao-xiang-cun-19873.jpg
+2025-11-23 20:50:42.828 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: the-man-from-dao-xiang-cun-19873
+2025-11-23 20:50:42.834 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: golden-kamuy-the-lightning-bandit-and-ogin-the-viperlong-tailed-tit-19870.jpg
+2025-11-23 20:50:42.834 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: golden-kamuy-the-lightning-bandit-and-ogin-the-viperlong-tailed-tit-19870
+2025-11-23 20:50:42.841 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: zombie-land-saga-movie-19869.jpg
+2025-11-23 20:50:42.841 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: zombie-land-saga-movie-19869
+2025-11-23 20:50:42.847 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: golden-kamuy-sapporo-beer-koujou-hen-19868.jpg
+2025-11-23 20:50:42.847 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: golden-kamuy-sapporo-beer-koujou-hen-19868
+2025-11-23 20:50:42.853 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: girls-band-cry-movie-19867.jpg
+2025-11-23 20:50:42.853 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: girls-band-cry-movie-19867
+2025-11-23 20:50:42.862 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: scarlet-19866.jpg
+2025-11-23 20:50:42.863 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: scarlet-19866
+2025-11-23 20:50:42.869 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: love-live-nijigasaki-high-school-idol-club-final-chapter-part-2-19865.jpg
+2025-11-23 20:50:42.869 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: love-live-nijigasaki-high-school-idol-club-final-chapter-part-2-19865
+2025-11-23 20:50:42.936 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:50:42.938 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem gachiakuta-19785 já em cache de memória
+2025-11-23 20:50:42.949 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: case-closed-323.jpg
+2025-11-23 20:50:42.949 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: case-closed-323
+2025-11-23 20:50:42.952 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem my-hero-academia-final-season-19930 já em cache de memória
+2025-11-23 20:50:42.957 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: no-longer-allowed-in-another-world-19247.jpg
+2025-11-23 20:50:42.958 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: no-longer-allowed-in-another-world-19247
+2025-11-23 20:50:42.960 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:50:42.970 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: naruto-shippuden-355.jpg
+2025-11-23 20:50:42.970 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: naruto-shippuden-355
+2025-11-23 20:50:42.976 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: bleach-806.jpg
+2025-11-23 20:50:42.976 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: bleach-806
+2025-11-23 20:50:42.985 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: black-clover-2404.jpg
+2025-11-23 20:50:42.986 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: black-clover-2404
+2025-11-23 20:50:42.991 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: solo-leveling-season-2-arise-from-the-shadow-19413.jpg
+2025-11-23 20:50:42.992 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: solo-leveling-season-2-arise-from-the-shadow-19413
+2025-11-23 20:50:43.056 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:50:43.059 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem naruto-shippuden-355 já em cache de memória
+2025-11-23 20:50:43.062 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem bleach-806 já em cache de memória
+2025-11-23 20:50:43.065 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem black-clover-2404 já em cache de memória
+2025-11-23 20:50:43.068 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem solo-leveling-season-2-arise-from-the-shadow-19413 já em cache de memória
+2025-11-23 20:50:43.102 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem one-piece-100 já em cache de memória
+2025-11-23 20:50:43.112 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: chainsaw-man-17406.jpg
+2025-11-23 20:50:43.112 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: chainsaw-man-17406
+2025-11-23 20:50:43.122 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: jujutsu-kaisen-tv-534.jpg
+2025-11-23 20:50:43.122 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: jujutsu-kaisen-tv-534
+2025-11-23 20:50:43.134 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056.png
+2025-11-23 20:50:43.134 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056
+2025-11-23 20:50:43.137 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem black-clover-2404 já em cache de memória
+2025-11-23 20:50:43.175 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: the-fragrant-flower-blooms-with-dignity-19789.jpg
+2025-11-23 20:50:43.176 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: the-fragrant-flower-blooms-with-dignity-19789
+2025-11-23 20:50:43.186 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-5388.jpg
+2025-11-23 20:50:43.186 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-5388
+2025-11-23 20:50:43.195 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: morita-san-wa-mukuchi-specials-6009.jpg
+2025-11-23 20:50:43.196 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: morita-san-wa-mukuchi-specials-6009
+2025-11-23 20:50:43.206 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: sylvanian-families-magic-tricks-and-other-adventures-11891.jpg
+2025-11-23 20:50:43.206 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: sylvanian-families-magic-tricks-and-other-adventures-11891
+2025-11-23 20:50:43.212 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: umi-monogatari-seeing-amamiko-island-with-kanon-7920.jpg
+2025-11-23 20:50:43.212 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: umi-monogatari-seeing-amamiko-island-with-kanon-7920
+2025-11-23 20:50:51.118 | INFO     | app:search_anime:295 - 🔍 Iniciando busca por: demon slayer
+2025-11-23 20:50:51.707 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 1
+2025-11-23 20:50:51.724 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: onigiri-9734.jpg
+2025-11-23 20:50:51.724 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: onigiri-9734
+2025-11-23 20:50:51.732 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: makaryuudo-demon-hunter-9596.jpg
+2025-11-23 20:50:51.732 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: makaryuudo-demon-hunter-9596
+2025-11-23 20:50:51.764 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-mt-natagumo-arc-17858.jpg
+2025-11-23 20:50:51.764 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: demon-slayer-mt-natagumo-arc-17858
+2025-11-23 20:50:51.771 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: shiki-797.jpg
+2025-11-23 20:50:51.772 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: shiki-797
+2025-11-23 20:50:51.783 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-kimetsu-no-yaiba-47.jpg
+2025-11-23 20:50:51.784 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: demon-slayer-kimetsu-no-yaiba-47
+2025-11-23 20:50:51.794 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-the-hashira-meeting-arc-17859.jpg
+2025-11-23 20:50:51.794 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: demon-slayer-the-hashira-meeting-arc-17859
+2025-11-23 20:50:51.797 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem demon-slayer-kimetsu-no-yaiba-swordsmith-village-arc-18056 já em cache de memória
+2025-11-23 20:50:51.807 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: zakuro-1596.jpg
+2025-11-23 20:50:51.807 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: zakuro-1596
+2025-11-23 20:50:51.816 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: shiki-specials-787.jpg
+2025-11-23 20:50:51.817 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: shiki-specials-787
+2025-11-23 20:50:51.830 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: demon-slayer-siblings-bond-17857.png
+2025-11-23 20:50:51.830 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: demon-slayer-siblings-bond-17857
+2025-11-23 20:51:04.003 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 2
+2025-11-23 20:51:04.030 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: karasu-tengu-kabuto-5882
+2025-11-23 20:51:04.035 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: zenki-3672
+2025-11-23 20:51:04.035 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: karasu-tengu-kabuto-5882 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\karasu-tengu-kabuto-5882.jpg
+2025-11-23 20:51:04.036 | DEBUG    | image_loader:run:77 - 🌐 Baixando: karasu-tengu-kabuto-5882 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/d1f0e4a655f0bca5af3a6f1cf524a1c7.jpg
+2025-11-23 20:51:04.039 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: demon-lord-retry-r-19349
+2025-11-23 20:51:04.040 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: zenki-3672 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\zenki-3672.jpg
+2025-11-23 20:51:04.041 | DEBUG    | image_loader:run:77 - 🌐 Baixando: zenki-3672 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/585106d5d58bc7e3fcabf4e07aa65515.jpg
+2025-11-23 20:51:04.045 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: devilman-the-demon-bird-3494
+2025-11-23 20:51:04.045 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: demon-lord-retry-r-19349 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\demon-lord-retry-r-19349.jpg
+2025-11-23 20:51:04.047 | DEBUG    | image_loader:run:77 - 🌐 Baixando: demon-lord-retry-r-19349 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/5b5035fd04b5f14d3dc3ea5607a5a7fc.jpg
+2025-11-23 20:51:04.053 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: super-demon-hero-wataru-4045
+2025-11-23 20:51:04.058 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: yashahime-princess-half-demon-1131
+2025-11-23 20:51:04.061 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: the-demon-girl-next-door-2nd-season-15781
+2025-11-23 20:51:04.065 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: makyou-densetsu-acrobunch-7786
+2025-11-23 20:51:04.068 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: yao-jing-zhong-zhi-shou-ce-5364
+2025-11-23 20:51:04.072 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: tales-of-demons-and-gods-1720
+2025-11-23 20:51:05.866 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\karasu-tengu-kabuto-5882.jpg
+2025-11-23 20:51:05.871 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: karasu-tengu-kabuto-5882
+2025-11-23 20:51:05.871 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem karasu-tengu-kabuto-5882 carregada com sucesso
+2025-11-23 20:51:05.875 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: devilman-the-demon-bird-3494 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\devilman-the-demon-bird-3494.jpg
+2025-11-23 20:51:05.876 | DEBUG    | image_loader:run:77 - 🌐 Baixando: devilman-the-demon-bird-3494 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/d73c3c1ce925ae0cd4d0335f3857c7dd.jpg
+2025-11-23 20:51:05.904 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\demon-lord-retry-r-19349.jpg
+2025-11-23 20:51:05.914 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: demon-lord-retry-r-19349
+2025-11-23 20:51:05.915 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem demon-lord-retry-r-19349 carregada com sucesso
+2025-11-23 20:51:05.920 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: super-demon-hero-wataru-4045 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\super-demon-hero-wataru-4045.jpg
+2025-11-23 20:51:05.921 | DEBUG    | image_loader:run:77 - 🌐 Baixando: super-demon-hero-wataru-4045 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/def761a30f828d9928b19d5523e5fb7b.jpg
+2025-11-23 20:51:05.961 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\zenki-3672.jpg
+2025-11-23 20:51:05.971 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: zenki-3672
+2025-11-23 20:51:05.971 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem zenki-3672 carregada com sucesso
+2025-11-23 20:51:05.976 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: yashahime-princess-half-demon-1131 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\yashahime-princess-half-demon-1131.jpg
+2025-11-23 20:51:05.976 | DEBUG    | image_loader:run:77 - 🌐 Baixando: yashahime-princess-half-demon-1131 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/35f5d28908f3f2f6b6e5b43c3b6b264e.jpg
+2025-11-23 20:51:07.626 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\super-demon-hero-wataru-4045.jpg
+2025-11-23 20:51:07.633 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: super-demon-hero-wataru-4045
+2025-11-23 20:51:07.633 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem super-demon-hero-wataru-4045 carregada com sucesso
+2025-11-23 20:51:07.638 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: the-demon-girl-next-door-2nd-season-15781 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\the-demon-girl-next-door-2nd-season-15781.jpg
+2025-11-23 20:51:07.639 | DEBUG    | image_loader:run:77 - 🌐 Baixando: the-demon-girl-next-door-2nd-season-15781 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/8ab7698bfe28babc2f5b70dca33f6d9e.jpg
+2025-11-23 20:51:07.645 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\devilman-the-demon-bird-3494.jpg
+2025-11-23 20:51:07.652 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: devilman-the-demon-bird-3494
+2025-11-23 20:51:07.652 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem devilman-the-demon-bird-3494 carregada com sucesso
+2025-11-23 20:51:07.655 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: makyou-densetsu-acrobunch-7786 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\makyou-densetsu-acrobunch-7786.jpg
+2025-11-23 20:51:07.656 | DEBUG    | image_loader:run:77 - 🌐 Baixando: makyou-densetsu-acrobunch-7786 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/719f666281cc8db42d18d9409fe653d7.jpg
+2025-11-23 20:51:07.856 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\yashahime-princess-half-demon-1131.jpg
+2025-11-23 20:51:07.865 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: yashahime-princess-half-demon-1131
+2025-11-23 20:51:07.866 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem yashahime-princess-half-demon-1131 carregada com sucesso
+2025-11-23 20:51:07.869 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: yao-jing-zhong-zhi-shou-ce-5364 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\yao-jing-zhong-zhi-shou-ce-5364.jpg
+2025-11-23 20:51:07.870 | DEBUG    | image_loader:run:77 - 🌐 Baixando: yao-jing-zhong-zhi-shou-ce-5364 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/afc65b8e9e1cb26fd18a567f4bba8f52.jpg
+2025-11-23 20:51:09.488 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\the-demon-girl-next-door-2nd-season-15781.jpg
+2025-11-23 20:51:09.495 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: the-demon-girl-next-door-2nd-season-15781
+2025-11-23 20:51:09.498 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem the-demon-girl-next-door-2nd-season-15781 carregada com sucesso
+2025-11-23 20:51:09.499 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: tales-of-demons-and-gods-1720 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\tales-of-demons-and-gods-1720.jpg
+2025-11-23 20:51:09.500 | DEBUG    | image_loader:run:77 - 🌐 Baixando: tales-of-demons-and-gods-1720 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/7b5dbfcf7bdd3fb5ad3cd5efdaa65d91.jpg
+2025-11-23 20:51:09.531 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\makyou-densetsu-acrobunch-7786.jpg
+2025-11-23 20:51:09.536 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: makyou-densetsu-acrobunch-7786
+2025-11-23 20:51:09.536 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem makyou-densetsu-acrobunch-7786 carregada com sucesso
+2025-11-23 20:51:09.737 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\yao-jing-zhong-zhi-shou-ce-5364.jpg
+2025-11-23 20:51:09.744 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: yao-jing-zhong-zhi-shou-ce-5364
+2025-11-23 20:51:09.744 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem yao-jing-zhong-zhi-shou-ce-5364 carregada com sucesso
+2025-11-23 20:51:10.937 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\tales-of-demons-and-gods-1720.jpg
+2025-11-23 20:51:10.944 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: tales-of-demons-and-gods-1720
+2025-11-23 20:51:10.944 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem tales-of-demons-and-gods-1720 carregada com sucesso
+2025-11-23 20:51:13.926 | INFO     | app:search_anime:295 - 🔍 Iniciando busca por: re zero
+2025-11-23 20:51:14.555 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 1
+2025-11-23 20:51:14.564 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: rerere-no-tensai-bakabon-7043.jpg
+2025-11-23 20:51:14.564 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: rerere-no-tensai-bakabon-7043
+2025-11-23 20:51:14.578 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: recorder-and-randsell-re-4089.jpg
+2025-11-23 20:51:14.578 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: recorder-and-randsell-re-4089
+2025-11-23 20:51:14.593 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: relife-471.jpg
+2025-11-23 20:51:14.594 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: relife-471
+2025-11-23 20:51:14.608 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: re-cutey-honey-3099.jpg
+2025-11-23 20:51:14.609 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: re-cutey-honey-3099
+2025-11-23 20:51:14.622 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: re-hamatora-season-2-1862.jpg
+2025-11-23 20:51:14.623 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: re-hamatora-season-2-1862
+2025-11-23 20:51:14.637 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: re-main-17670.jpg
+2025-11-23 20:51:14.637 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: re-main-17670
+2025-11-23 20:51:14.649 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: re-kan-4500.jpg
+2025-11-23 20:51:14.649 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: re-kan-4500
+2025-11-23 20:51:14.660 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: re-birthday-2881.jpg
+2025-11-23 20:51:14.660 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: re-birthday-2881
+2025-11-23 20:51:14.671 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: restage-dream-days-4942.jpg
+2025-11-23 20:51:14.672 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: restage-dream-days-4942
+2025-11-23 20:51:14.684 | DEBUG    | modules.cache.image_cache:load_from_cache_sync:47 - ✅ Cache síncrono válido: mobile-suit-gundam-unicorn-re0096-1389.jpg
+2025-11-23 20:51:14.684 | DEBUG    | app:load_anime_poster_async:100 - 💾 Cache SÍNCRONO encontrado: mobile-suit-gundam-unicorn-re0096-1389
+2025-11-23 20:51:21.075 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 2
+2025-11-23 20:51:21.082 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: raw-zoids-wild-zero-12750
+2025-11-23 20:51:21.087 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: raw-zoids-wild-zero-12750 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\raw-zoids-wild-zero-12750.jpg
+2025-11-23 20:51:21.088 | DEBUG    | image_loader:run:77 - 🌐 Baixando: raw-zoids-wild-zero-12750 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/2e1ae9da24527b9a1962994fc3dea1ca.jpg
+2025-11-23 20:51:21.087 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: shironeko-project-zero-chronicle-9768
+2025-11-23 20:51:21.094 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: shironeko-project-zero-chronicle-9768 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\shironeko-project-zero-chronicle-9768.jpg
+2025-11-23 20:51:21.095 | DEBUG    | image_loader:run:77 - 🌐 Baixando: shironeko-project-zero-chronicle-9768 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/834a5d5bd5ea4ceaa4dda5ae402d4901.jpg
+2025-11-23 20:51:21.095 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: apocalypse-zero-10469
+2025-11-23 20:51:21.101 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: apocalypse-zero-10469 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\apocalypse-zero-10469.jpg
+2025-11-23 20:51:21.102 | DEBUG    | image_loader:run:77 - 🌐 Baixando: apocalypse-zero-10469 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/61da6c7d8f77cc3339de9f3e3a2af059.jpg
+2025-11-23 20:51:21.102 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: duel-masters-zero-8070
+2025-11-23 20:51:21.108 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: aika-zero-8181
+2025-11-23 20:51:21.113 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: marie-gali-episode-zero-8576
+2025-11-23 20:51:21.116 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: f-zero-gp-legend-6148
+2025-11-23 20:51:21.119 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: 009-1-rb-6590
+2025-11-23 20:51:21.122 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: 009-1-6880
+2025-11-23 20:51:21.126 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: aika-zero-picture-drama-9078
+2025-11-23 20:51:22.932 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\raw-zoids-wild-zero-12750.jpg
+2025-11-23 20:51:22.942 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: raw-zoids-wild-zero-12750
+2025-11-23 20:51:22.943 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem raw-zoids-wild-zero-12750 carregada com sucesso
+2025-11-23 20:51:22.946 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: duel-masters-zero-8070 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\duel-masters-zero-8070.jpg
+2025-11-23 20:51:22.947 | DEBUG    | image_loader:run:77 - 🌐 Baixando: duel-masters-zero-8070 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/f90b808fba89c6120839d2433890d92a.jpg
+2025-11-23 20:51:23.033 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\shironeko-project-zero-chronicle-9768.jpg
+2025-11-23 20:51:23.046 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: shironeko-project-zero-chronicle-9768
+2025-11-23 20:51:23.046 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem shironeko-project-zero-chronicle-9768 carregada com sucesso
+2025-11-23 20:51:23.050 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: aika-zero-8181 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\aika-zero-8181.jpg
+2025-11-23 20:51:23.051 | DEBUG    | image_loader:run:77 - 🌐 Baixando: aika-zero-8181 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/1c5c9bc7476ef3620b0a8324bdffa590.jpg
+2025-11-23 20:51:23.053 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\apocalypse-zero-10469.jpg
+2025-11-23 20:51:23.061 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: apocalypse-zero-10469
+2025-11-23 20:51:23.062 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem apocalypse-zero-10469 carregada com sucesso
+2025-11-23 20:51:23.066 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: marie-gali-episode-zero-8576 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\marie-gali-episode-zero-8576.jpg
+2025-11-23 20:51:23.067 | DEBUG    | image_loader:run:77 - 🌐 Baixando: marie-gali-episode-zero-8576 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/dea49979c4a673be99a3b1eff998bf6c.jpg
+2025-11-23 20:51:24.681 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\aika-zero-8181.jpg
+2025-11-23 20:51:24.685 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: aika-zero-8181
+2025-11-23 20:51:24.686 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem aika-zero-8181 carregada com sucesso
+2025-11-23 20:51:24.691 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: f-zero-gp-legend-6148 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\f-zero-gp-legend-6148.jpg
+2025-11-23 20:51:24.691 | DEBUG    | image_loader:run:77 - 🌐 Baixando: f-zero-gp-legend-6148 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/387d9d14026bf9b14c153201440520ab.jpg
+2025-11-23 20:51:24.839 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\duel-masters-zero-8070.jpg
+2025-11-23 20:51:24.848 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: duel-masters-zero-8070
+2025-11-23 20:51:24.848 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem duel-masters-zero-8070 carregada com sucesso
+2025-11-23 20:51:24.853 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: 009-1-rb-6590 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\009-1-rb-6590.jpg
+2025-11-23 20:51:24.853 | DEBUG    | image_loader:run:77 - 🌐 Baixando: 009-1-rb-6590 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/d8cf7735a70766edfbb1c857d49b09a4.jpg
+2025-11-23 20:51:24.901 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\marie-gali-episode-zero-8576.jpg
+2025-11-23 20:51:24.909 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: marie-gali-episode-zero-8576
+2025-11-23 20:51:24.910 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem marie-gali-episode-zero-8576 carregada com sucesso
+2025-11-23 20:51:24.915 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: 009-1-6880 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\009-1-6880.jpg
+2025-11-23 20:51:24.915 | DEBUG    | image_loader:run:77 - 🌐 Baixando: 009-1-6880 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/3cb71cdfad7874c5223c16f15e732421.jpg
+2025-11-23 20:51:26.510 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\f-zero-gp-legend-6148.jpg
+2025-11-23 20:51:26.516 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: f-zero-gp-legend-6148
+2025-11-23 20:51:26.516 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem f-zero-gp-legend-6148 carregada com sucesso
+2025-11-23 20:51:26.521 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: aika-zero-picture-drama-9078 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\aika-zero-picture-drama-9078.jpg
+2025-11-23 20:51:26.521 | DEBUG    | image_loader:run:77 - 🌐 Baixando: aika-zero-picture-drama-9078 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/4c2da71f34953e81245c3efe50c1ab3c.jpg
+2025-11-23 20:51:26.706 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\009-1-6880.jpg
+2025-11-23 20:51:26.712 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: 009-1-6880
+2025-11-23 20:51:26.712 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem 009-1-6880 carregada com sucesso
+2025-11-23 20:51:26.794 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\009-1-rb-6590.jpg
+2025-11-23 20:51:26.800 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: 009-1-rb-6590
+2025-11-23 20:51:26.801 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem 009-1-rb-6590 carregada com sucesso
+2025-11-23 20:51:27.743 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 3
+2025-11-23 20:51:27.752 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: no-game-no-life-zero-160
+2025-11-23 20:51:27.758 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: no-game-no-life-zero-160 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\no-game-no-life-zero-160.jpg
+2025-11-23 20:51:27.758 | DEBUG    | image_loader:run:77 - 🌐 Baixando: no-game-no-life-zero-160 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/42cd9f574cb038d6074875ba2f125601.jpg
+2025-11-23 20:51:27.758 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: steinsgate-0-92
+2025-11-23 20:51:27.777 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: steinsgate-0-92 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\steinsgate-0-92.jpg
+2025-11-23 20:51:27.778 | DEBUG    | image_loader:run:77 - 🌐 Baixando: steinsgate-0-92 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/72322970318a3c89f4b7d2193c279c6f.jpg
+2025-11-23 20:51:28.033 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\aika-zero-picture-drama-9078.jpg
+2025-11-23 20:51:28.043 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: aika-zero-picture-drama-9078
+2025-11-23 20:51:29.339 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\no-game-no-life-zero-160.jpg
+2025-11-23 20:51:29.346 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: no-game-no-life-zero-160
+2025-11-23 20:51:29.346 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem no-game-no-life-zero-160 carregada com sucesso
+2025-11-23 20:51:29.346 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\steinsgate-0-92.jpg
+2025-11-23 20:51:29.355 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: steinsgate-0-92
+2025-11-23 20:51:29.355 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem steinsgate-0-92 carregada com sucesso
+2025-11-23 20:51:35.544 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 2
+2025-11-23 20:51:35.548 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem raw-zoids-wild-zero-12750 já em cache de memória
+2025-11-23 20:51:35.551 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem shironeko-project-zero-chronicle-9768 já em cache de memória
+2025-11-23 20:51:35.554 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem apocalypse-zero-10469 já em cache de memória
+2025-11-23 20:51:35.556 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem duel-masters-zero-8070 já em cache de memória
+2025-11-23 20:51:35.560 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem aika-zero-8181 já em cache de memória
+2025-11-23 20:51:35.563 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem marie-gali-episode-zero-8576 já em cache de memória
+2025-11-23 20:51:35.565 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem f-zero-gp-legend-6148 já em cache de memória
+2025-11-23 20:51:35.568 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem 009-1-rb-6590 já em cache de memória
+2025-11-23 20:51:35.570 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem 009-1-6880 já em cache de memória
+2025-11-23 20:51:35.573 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem aika-zero-picture-drama-9078 já em cache de memória
+2025-11-23 20:51:42.247 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 1
+2025-11-23 20:51:42.258 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem rerere-no-tensai-bakabon-7043 já em cache de memória
+2025-11-23 20:51:42.262 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem recorder-and-randsell-re-4089 já em cache de memória
+2025-11-23 20:51:42.266 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem relife-471 já em cache de memória
+2025-11-23 20:51:42.270 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem re-cutey-honey-3099 já em cache de memória
+2025-11-23 20:51:42.273 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem re-hamatora-season-2-1862 já em cache de memória
+2025-11-23 20:51:42.277 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem re-main-17670 já em cache de memória
+2025-11-23 20:51:42.280 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem re-kan-4500 já em cache de memória
+2025-11-23 20:51:42.284 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem re-birthday-2881 já em cache de memória
+2025-11-23 20:51:42.286 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem restage-dream-days-4942 já em cache de memória
+2025-11-23 20:51:42.289 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem mobile-suit-gundam-unicorn-re0096-1389 já em cache de memória
+2025-11-23 20:51:57.758 | INFO     | app:search_anime:295 - 🔍 Iniciando busca por: jujutso kaisen
+2025-11-23 20:51:58.395 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 1
+2025-11-23 20:51:58.401 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: jujutsu-kaisen-0-movie-17763
+2025-11-23 20:51:58.406 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: jujutsu-kaisen-0-movie-17763 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\jujutsu-kaisen-0-movie-17763.jpg
+2025-11-23 20:51:58.406 | DEBUG    | image_loader:run:77 - 🌐 Baixando: jujutsu-kaisen-0-movie-17763 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/a26294497c6afa9b885636b373d611f9.jpg
+2025-11-23 20:51:58.406 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: dr-stone-stone-wars-eve-of-the-battle-special-feature-17236
+2025-11-23 20:51:58.410 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: dr-stone-stone-wars-eve-of-the-battle-special-feature-17236 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\dr-stone-stone-wars-eve-of-the-battle-special-feature-17236.jpg
+2025-11-23 20:51:58.413 | DEBUG    | image_loader:run:77 - 🌐 Baixando: dr-stone-stone-wars-eve-of-the-battle-special-feature-17236 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/c133b5d3ae580d33d8ef95296dffe1b7.jpg
+2025-11-23 20:51:58.413 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: jujutsu-kaisen-specials-18535
+2025-11-23 20:51:58.420 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: flcl-grunge-18532
+2025-11-23 20:51:58.420 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: jujutsu-kaisen-specials-18535 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\jujutsu-kaisen-specials-18535.jpg
+2025-11-23 20:51:58.421 | DEBUG    | image_loader:run:77 - 🌐 Baixando: jujutsu-kaisen-specials-18535 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/78d183cd4fe881d5b656c52053d73c77.jpg
+2025-11-23 20:51:58.426 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529
+2025-11-23 20:51:58.432 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: jujutsu-kaisen-2nd-season-18413
+2025-11-23 20:51:58.436 | DEBUG    | app:load_anime_poster_async:91 - ✅ Imagem jujutsu-kaisen-tv-534 já em cache de memória
+2025-11-23 20:52:00.154 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\jujutsu-kaisen-0-movie-17763.jpg
+2025-11-23 20:52:00.157 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: jujutsu-kaisen-0-movie-17763
+2025-11-23 20:52:00.157 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem jujutsu-kaisen-0-movie-17763 carregada com sucesso
+2025-11-23 20:52:00.162 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: flcl-grunge-18532 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\flcl-grunge-18532.jpg
+2025-11-23 20:52:00.162 | DEBUG    | image_loader:run:77 - 🌐 Baixando: flcl-grunge-18532 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/1c582a3ca3805c7f4a6f53138c294cc8.jpg
+2025-11-23 20:52:00.241 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\dr-stone-stone-wars-eve-of-the-battle-special-feature-17236.jpg
+2025-11-23 20:52:00.249 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: dr-stone-stone-wars-eve-of-the-battle-special-feature-17236
+2025-11-23 20:52:00.249 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem dr-stone-stone-wars-eve-of-the-battle-special-feature-17236 carregada com sucesso
+2025-11-23 20:52:00.252 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529.jpg
+2025-11-23 20:52:00.253 | DEBUG    | image_loader:run:77 - 🌐 Baixando: ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/61adbe6b1f9efa84b3c90d88f97b4d52.jpg
+2025-11-23 20:52:00.271 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\jujutsu-kaisen-specials-18535.jpg
+2025-11-23 20:52:00.282 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: jujutsu-kaisen-specials-18535
+2025-11-23 20:52:00.283 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem jujutsu-kaisen-specials-18535 carregada com sucesso
+2025-11-23 20:52:00.287 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: jujutsu-kaisen-2nd-season-18413 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\jujutsu-kaisen-2nd-season-18413.png
+2025-11-23 20:52:00.288 | DEBUG    | image_loader:run:77 - 🌐 Baixando: jujutsu-kaisen-2nd-season-18413 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/b51f863b05f30576cf9d85fa9b911bb5.png
+2025-11-23 20:52:01.961 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\flcl-grunge-18532.jpg
+2025-11-23 20:52:01.969 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem flcl-grunge-18532 carregada com sucesso
+2025-11-23 20:52:01.970 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: flcl-grunge-18532
+2025-11-23 20:52:01.995 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529.jpg
+2025-11-23 20:52:01.998 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529
+2025-11-23 20:52:01.998 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem ryukyu-timeline-2-searching-for-the-city-of-the-tedako-18529 carregada com sucesso
+2025-11-23 20:52:02.099 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\jujutsu-kaisen-2nd-season-18413.png
+2025-11-23 20:52:02.107 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: jujutsu-kaisen-2nd-season-18413
+2025-11-23 20:52:02.108 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem jujutsu-kaisen-2nd-season-18413 carregada com sucesso
+2025-11-23 20:52:17.870 | INFO     | app:search_anime:295 - 🔍 Iniciando busca por: re:zero
+2025-11-23 20:52:18.594 | INFO     | modules.anime.anime_data:get_search_anime:12 - ✅ Dados dos animes obtidos com sucesso - Página 1
+2025-11-23 20:52:18.598 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-starting-life-in-another-world-season-3-19301
+2025-11-23 20:52:18.601 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-starting-life-in-another-world-season-3-19301 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-season-3-19301.jpg
+2025-11-23 20:52:18.602 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-starting-life-in-another-world-season-3-19301 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/fd9a4794949c53baa8ef6ae16f78c7ab.jpg
+2025-11-23 20:52:18.602 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-starting-life-in-another-world-2nd-season-part-2-15526
+2025-11-23 20:52:18.606 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-starting-break-time-from-zero-5047
+2025-11-23 20:52:18.606 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-starting-life-in-another-world-2nd-season-part-2-15526 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-2nd-season-part-2-15526.jpg
+2025-11-23 20:52:18.610 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-starting-life-in-another-world-2nd-season-part-2-15526 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/b901e36b53189d739740f0e5edb96459.jpg
+2025-11-23 20:52:18.610 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-kara-hajimeru-break-time-2nd-season-3473
+2025-11-23 20:52:18.610 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-starting-break-time-from-zero-5047 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-break-time-from-zero-5047.jpg
+2025-11-23 20:52:18.614 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-starting-break-time-from-zero-5047 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/3fbd38cc5b02d071eb2b98bce8223173.jpg
+2025-11-23 20:52:18.614 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-petit-4773
+2025-11-23 20:52:18.618 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473
+2025-11-23 20:52:18.622 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-starting-life-in-another-world-the-frozen-bond-1191
+2025-11-23 20:52:18.626 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-starting-life-in-another-world-212
+2025-11-23 20:52:18.630 | DEBUG    | app:load_anime_poster_async:113 - 🚀 Iniciando carregamento assíncrono: rezero-starting-life-in-another-world-season-2-54
+2025-11-23 20:52:20.484 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-season-3-19301.jpg
+2025-11-23 20:52:20.488 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-starting-life-in-another-world-season-3-19301
+2025-11-23 20:52:20.488 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-starting-life-in-another-world-season-3-19301 carregada com sucesso
+2025-11-23 20:52:20.492 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-kara-hajimeru-break-time-2nd-season-3473 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-kara-hajimeru-break-time-2nd-season-3473.jpg
+2025-11-23 20:52:20.492 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-kara-hajimeru-break-time-2nd-season-3473 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/15694cb07903bf3d36416d149ae0a93e.jpg
+2025-11-23 20:52:20.559 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-2nd-season-part-2-15526.jpg
+2025-11-23 20:52:20.570 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-starting-life-in-another-world-2nd-season-part-2-15526
+2025-11-23 20:52:20.570 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-starting-life-in-another-world-2nd-season-part-2-15526 carregada com sucesso
+2025-11-23 20:52:20.575 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-petit-4773 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-petit-4773.jpg
+2025-11-23 20:52:20.576 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-petit-4773 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/e878b92ca63018a0f42295d7e3fb9fa3.jpg
+2025-11-23 20:52:20.623 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-break-time-from-zero-5047.jpg
+2025-11-23 20:52:20.631 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-starting-break-time-from-zero-5047
+2025-11-23 20:52:20.632 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-starting-break-time-from-zero-5047 carregada com sucesso
+2025-11-23 20:52:20.636 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473.jpg
+2025-11-23 20:52:20.636 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/ca6faf0784e4233fc3fdfbae441eb789.jpg
+2025-11-23 20:52:22.399 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-kara-hajimeru-break-time-2nd-season-3473.jpg
+2025-11-23 20:52:22.404 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-kara-hajimeru-break-time-2nd-season-3473
+2025-11-23 20:52:22.405 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-kara-hajimeru-break-time-2nd-season-3473 carregada com sucesso
+2025-11-23 20:52:22.409 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-starting-life-in-another-world-the-frozen-bond-1191 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-the-frozen-bond-1191.jpg
+2025-11-23 20:52:22.410 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-starting-life-in-another-world-the-frozen-bond-1191 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/a0b0a75eba56535787ecb8e33b35f476.jpg
+2025-11-23 20:52:22.467 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-petit-4773.jpg
+2025-11-23 20:52:22.470 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-petit-4773
+2025-11-23 20:52:22.470 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-petit-4773 carregada com sucesso
+2025-11-23 20:52:22.474 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-starting-life-in-another-world-212 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-212.jpg
+2025-11-23 20:52:22.474 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-starting-life-in-another-world-212 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/825040c17445dd322656870e36cd92a7.jpg
+2025-11-23 20:52:22.558 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473.jpg
+2025-11-23 20:52:22.569 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473
+2025-11-23 20:52:22.569 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-kara-hajimeru-isekai-seikatsu-memory-snow-1473 carregada com sucesso
+2025-11-23 20:52:22.574 | DEBUG    | image_loader:run:74 - 💾 Cache MISS: rezero-starting-life-in-another-world-season-2-54 - C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-season-2-54.jpg
+2025-11-23 20:52:22.574 | DEBUG    | image_loader:run:77 - 🌐 Baixando: rezero-starting-life-in-another-world-season-2-54 - https://cdn.noitatnemucod.net/thumbnail/300x400/100/04c2420fa1e0c987f04ae6d20d40065f.jpg
+2025-11-23 20:52:24.301 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-the-frozen-bond-1191.jpg
+2025-11-23 20:52:24.308 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-starting-life-in-another-world-the-frozen-bond-1191
+2025-11-23 20:52:24.309 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-starting-life-in-another-world-the-frozen-bond-1191 carregada com sucesso
+2025-11-23 20:52:24.398 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-212.jpg
+2025-11-23 20:52:24.406 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-starting-life-in-another-world-212
+2025-11-23 20:52:24.406 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-starting-life-in-another-world-212 carregada com sucesso
+2025-11-23 20:52:24.428 | DEBUG    | image_loader:save_to_cache:62 - 💾 Imagem salva em cache: C:\Users\Luke\AppData\Local\AniPlay\cache\images\rezero-starting-life-in-another-world-season-2-54.jpg
+2025-11-23 20:52:24.435 | DEBUG    | image_loader:run:86 - ✅ Imagem carregada: rezero-starting-life-in-another-world-season-2-54
+2025-11-23 20:52:24.435 | DEBUG    | app:on_poster_loaded:142 - ✅ Imagem rezero-starting-life-in-another-world-season-2-54 carregada com sucesso
+2025-11-23 20:52:54.661 | INFO     | app:closeEvent:925 - 💾 Cache final: 7.92 MB
