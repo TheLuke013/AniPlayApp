@@ -1,6 +1,24 @@
 import requests
 from loguru import logger
 
+def get_anime_episode_servers(episode_id):
+    try:
+        url = f"http://localhost:4000/api/v2/hianime/episode/servers?animeEpisodeId={episode_id}"
+        
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            logger.info(f"✅ Dados do episodio {episode_id} obtidos com sucesso")
+            return data
+        else:
+            logger.error(f"❌ Erro na API: {response.status_code} - {response.text}")
+            return None
+            
+    except requests.exceptions.RequestException as e:
+        logger.error(f"❌ Erro de conexão: {e}")
+        return None
+
 def get_anime_episodes(anime_id):
     try:
         url = f"http://localhost:4000/api/v2/hianime/anime/{anime_id}/episodes"

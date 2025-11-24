@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-                               QPushButton, QScrollArea, QWidget, QFrame)
+                               QPushButton, QScrollArea, QWidget, QFrame,
+                               QGridLayout, QSizePolicy)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 
 import json
 from loguru import logger
 
-from modules.anime.anime_data import get_anime_info, get_anime_episodes
+from modules.anime.anime_data import get_anime_info, get_anime_episodes, get_anime_episode_servers
 
 def get_anime_structure(anime):
     anime_info = get_anime_info(anime['id'])
@@ -27,19 +28,60 @@ def get_anime_structure(anime):
         "year": more_info.get("aired", "N/A")
     }
 
+class EpisodeButton(QPushButton):
+    def __init__(self, episode_data, parent=None):
+        super().__init__(parent)
+        self.episode_data = episode_data
+        self.setup_ui()
+        
+    def setup_ui(self):
+        episode_number = self.episode_data.get('number', 0)
+        episode_title = self.episode_data.get('title', f'Episódio {episode_number}')
+        is_filler = self.episode_data.get('isFiller', False)
+        
+        # Texto do botão
+        filler_text = " (Filler)" if is_filler else ""
+        self.setText(f"EP {episode_number}\n{episode_title}{filler_text}")
+        
+        self.setFixedSize(180, 80)
+        self.setStyleSheet("""
+            EpisodeButton {
+                background: #2a2a2a;
+                color: white;
+                border: 2px solid #3a3a3a;
+                border-radius: 8px;
+                padding: 8px;
+                font-size: 11px;
+                text-align: center;
+            }
+            EpisodeButton:hover {
+                background: #333333;
+                border: 2px solid #ff7b00;
+            }
+            EpisodeButton:pressed {
+                background: #ff7b00;
+            }
+        """)
+        
+        # Tooltip com informações detalhadas
+        self.setToolTip(f"Episódio {episode_number}: {episode_title}")
+
 class AnimeDetailsDialog(QDialog):
     def __init__(self, anime, image_loader_callback, parent=None):
         super().__init__(parent)
         self.anime = get_anime_structure(anime)
         self.image_loader_callback = image_loader_callback
+        self.episodes_data = None
         
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
-        
         self.setup_ui()
+        
+        # Carrega os episódios em background
+        self.load_episodes()
            
     def setup_ui(self):
         self.setWindowTitle(f"Detalhes - {self.anime.get('name', 'Anime')}")
-        self.setFixedSize(800, 600)
+        self.setFixedSize(900, 700)  # Aumentei o tamanho para caber os episódios
         self.setStyleSheet("""
             QDialog {
                 background: #1e1e1e;
@@ -82,32 +124,167 @@ class AnimeDetailsDialog(QDialog):
         """)
         
         # Widget de conteúdo que vai dentro da scroll area
-        content_widget = QWidget()
-        content_layout = QVBoxLayout()
-        content_layout.setContentsMargins(20, 20, 20, 20)
-        content_layout.setSpacing(20)
+        self.content_widget = QWidget()
+        self.content_layout = QVBoxLayout()
+        self.content_layout.setContentsMargins(20, 20, 20, 20)
+        self.content_layout.setSpacing(20)
         
         # Cabeçalho
         header_widget = self.create_header()
-        content_layout.addWidget(header_widget)
+        self.content_layout.addWidget(header_widget)
         
         # Descrição
         description_widget = self.create_description()
-        content_layout.addWidget(description_widget)
+        self.content_layout.addWidget(description_widget)
         
         # Informações detalhadas
         details_widget = self.create_details_section()
-        content_layout.addWidget(details_widget)
+        self.content_layout.addWidget(details_widget)
+        
+        # SEÇÃO DE EPISÓDIOS (inicialmente vazia)
+        self.episodes_section = self.create_episodes_section()
+        self.content_layout.addWidget(self.episodes_section)
         
         # Botões de ação
         buttons_widget = self.create_action_buttons()
-        content_layout.addWidget(buttons_widget)
+        self.content_layout.addWidget(buttons_widget)
         
-        content_widget.setLayout(content_layout)
-        scroll_area.setWidget(content_widget)
+        self.content_widget.setLayout(self.content_layout)
+        scroll_area.setWidget(self.content_widget)
         
         main_layout.addWidget(scroll_area)
         self.setLayout(main_layout)
+    
+    def create_episodes_section(self):
+        """Cria a seção de episódios (inicialmente vazia)"""
+        section = QFrame()
+        section.setStyleSheet("""
+            QFrame {
+                background: #2a2a2a;
+                border-radius: 10px;
+                padding: 15px;
+            }
+        """)
+        
+        layout = QVBoxLayout()
+        
+        # Título da seção
+        title_label = QLabel("📺 Episódios")
+        title_label.setStyleSheet("""
+            QLabel {
+                color: #ff7b00;
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
+        """)
+        
+        # Container para os botões de episódios
+        self.episodes_container = QWidget()
+        self.episodes_grid = QGridLayout()
+        self.episodes_grid.setSpacing(10)
+        self.episodes_grid.setContentsMargins(0, 0, 0, 0)
+        
+        self.episodes_container.setLayout(self.episodes_grid)
+        
+        # Label de carregamento
+        self.episodes_loading_label = QLabel("Carregando episódios...")
+        self.episodes_loading_label.setStyleSheet("""
+            QLabel {
+                color: #888;
+                font-size: 14px;
+                text-align: center;
+                padding: 20px;
+            }
+        """)
+        self.episodes_loading_label.setAlignment(Qt.AlignCenter)
+        
+        layout.addWidget(title_label)
+        layout.addWidget(self.episodes_loading_label)
+        layout.addWidget(self.episodes_container)
+        
+        section.setLayout(layout)
+        return section
+    
+    def load_episodes(self):
+        """Carrega os episódios do anime"""
+        try:
+            anime_episodes = get_anime_episodes(self.anime.get('id'))
+            if anime_episodes and "data" in anime_episodes:
+                self.episodes_data = anime_episodes["data"]
+                logger.info(f"✅ Episódios carregados: {len(self.episodes_data.get('episodes', []))} episódios")
+                
+                # Atualiza a UI com os episódios
+                self.display_episodes()
+            else:
+                self.show_episodes_error("Não foi possível carregar os episódios.")
+                
+        except Exception as e:
+            logger.error(f"❌ Erro ao carregar episódios: {e}")
+            self.show_episodes_error("Erro ao carregar episódios.")
+    
+    def display_episodes(self):
+        """Exibe os episódios na interface"""
+        if not self.episodes_data:
+            return
+            
+        # Remove a mensagem de carregamento
+        self.episodes_loading_label.hide()
+        
+        episodes = self.episodes_data.get('episodes', [])
+        total_episodes = self.episodes_data.get('totalEpisodes', 0)
+        
+        if not episodes:
+            self.show_episodes_error("Nenhum episódio disponível.")
+            return
+        
+        # Atualiza o título com a contagem
+        episodes_title = f"📺 Episódios ({len(episodes)}/{total_episodes})"
+        title_label = self.episodes_section.layout().itemAt(0).widget()
+        if isinstance(title_label, QLabel):
+            title_label.setText(episodes_title)
+        
+        # Limpa o grid anterior
+        for i in reversed(range(self.episodes_grid.count())): 
+            self.episodes_grid.itemAt(i).widget().setParent(None)
+        
+        # Adiciona os botões de episódios
+        row, col = 0, 0
+        max_cols = 4  # 4 botões por linha
+        
+        for episode in episodes:
+            episode_btn = EpisodeButton(episode)
+            episode_btn.clicked.connect(lambda checked, ep=episode: self.play_episode(ep))
+            
+            self.episodes_grid.addWidget(episode_btn, row, col)
+            
+            col += 1
+            if col >= max_cols:
+                col = 0
+                row += 1
+    
+    def show_episodes_error(self, message):
+        """Mostra mensagem de erro na seção de episódios"""
+        self.episodes_loading_label.setText(message)
+        self.episodes_loading_label.setStyleSheet("""
+            QLabel {
+                color: #ff4444;
+                font-size: 14px;
+                text-align: center;
+                padding: 20px;
+            }
+        """)
+    
+    def play_episode(self, episode_data):
+        """Abre a seleção de servidor para um episódio"""
+        episode_number = episode_data.get('number', 0)
+        episode_title = episode_data.get('title', f'Episódio {episode_number}')
+        episode_id = episode_data.get('episodeId', '')
+        
+        logger.info(f"🎬 Selecionando servidor para episódio {episode_number}: {episode_title}")
+        logger.info(f"📋 Episode ID: {episode_id}")
+        
+        self.open_video_player(episode_id, episode_data)
     
     def create_header(self):
         widget = QWidget()
@@ -231,11 +408,6 @@ class AnimeDetailsDialog(QDialog):
             duration_widget = self.create_info_row("Duração", self.anime['duration'])
             layout.addWidget(duration_widget)
         
-        # Classificação (se disponível)
-        if self.anime.get('rating'):
-            rating_widget = self.create_info_row("Classificação", self.anime['rating'])
-            layout.addWidget(rating_widget)
-        
         widget.setLayout(layout)
         return widget
     
@@ -272,7 +444,7 @@ class AnimeDetailsDialog(QDialog):
         widget = QWidget()
         layout = QHBoxLayout()
         
-        # Botão Fechar (agora é o principal)
+        # Botão Fechar
         close_btn = QPushButton("✕ Fechar")
         close_btn.setStyleSheet("""
             QPushButton {
@@ -290,41 +462,77 @@ class AnimeDetailsDialog(QDialog):
         """)
         close_btn.clicked.connect(self.close)
         
-        # Botão Assistir
-        watch_btn = QPushButton("🎬 Assistir Anime")
-        watch_btn.setStyleSheet("""
-            QPushButton {
-                background: #ff7b00;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 12px 20px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background: #ff9500;
-            }
-        """)
-        watch_btn.clicked.connect(self.watch_anime)
-        
         layout.addStretch()
         layout.addWidget(close_btn)
-        layout.addWidget(watch_btn)
         
         widget.setLayout(layout)
         return widget
     
-    def watch_anime(self):
-        """Abre o player do anime"""
-        print(f"Iniciando anime: {self.anime.get('name')}")
+    def open_video_player(self, episode_id, episode_data):
+        """Abre o diálogo de seleção de servidor para um episódio"""
         
-        anime_episodes = get_anime_episodes(self.anime.get('id'))
-        if anime_episodes and "data" in anime_episodes:
-            logger.info(json.dumps(anime_episodes["data"], indent=4, ensure_ascii=False))
+        episode_servers = get_anime_episode_servers(episode_id)
+        if episode_servers and "data" in episode_servers:
+            logger.info(f"✅ Servidores de episódio obtidos com sucesso")
+            
+            from modules.ui.server_selection_dialog import ServerSelectionDialog
+            
+            selection_dialog = ServerSelectionDialog(
+                episode_data, 
+                episode_servers["data"],
+                self
+            )
+            
+            if selection_dialog.exec() == QDialog.Accepted:
+                selection = selection_dialog.get_selection()
+                self.start_video_playback(selection)
+            else:
+                logger.info("❌ Seleção de servidor cancelada pelo usuário")
+                
+        else:
+            logger.error(f"❌ Falha ao obter servidores de episódio")
+            self.show_error_message("Erro ao carregar servidores", "Não foi possível carregar os servidores disponíveis para este episódio.")
 
-        self.accept()
-    
+    def start_video_playback(self, selection):
+        """Inicia a reprodução do vídeo com a seleção do usuário"""
+        server = selection['server']
+        language = selection['language']
+        episode_data = selection['episode_data']
+        
+        episode_number = episode_data.get('number', 0)
+        episode_title = episode_data.get('title', f'Episódio {episode_number}')
+        server_name = server.get('serverName', 'Desconhecido')
+        server_id = server.get('serverId')
+        
+        logger.info(f"🎬 Iniciando reprodução:")
+        logger.info(f"   Episódio: {episode_number} - {episode_title}")
+        logger.info(f"   Idioma: {language}")
+        logger.info(f"   Servidor: {server_name} (ID: {server_id})")
+        
+        # Aqui você implementaria a lógica para:
+        # 1. Buscar o link do vídeo usando server_id e episode_id
+        # 2. Abrir o player de vídeo
+        # 3. Reproduzir o conteúdo
+        
+        # Por enquanto, vamos apenas mostrar as informações
+        from PySide6.QtWidgets import QMessageBox
+        QMessageBox.information(
+            self,
+            "Reproduzir Episódio",
+            f"""Pronto para reproduzir:
+
+    Episódio: {episode_number} - {episode_title}
+    Idioma: {'Legendado' if language == 'sub' else 'Dublado'}
+    Servidor: {server_name}
+
+    A implementação do player de vídeo será adicionada em breve!"""
+        )
+
+    def show_error_message(self, title, message):
+        """Mostra uma mensagem de erro"""
+        from PySide6.QtWidgets import QMessageBox
+        QMessageBox.warning(self, title, message)
+
     def mousePressEvent(self, event):
         """Permite arrastar a janela sem barras de título"""
         if event.button() == Qt.LeftButton:
