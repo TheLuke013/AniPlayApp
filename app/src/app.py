@@ -321,7 +321,7 @@ class AniPlayApp(QMainWindow):
             }
             
             if anime_results:
-                results_section = self.create_anime_section("Resultados", convert_anime_data(anime_results))
+                results_section = self.create_anime_section(f'Resultados para "{text}"', convert_anime_data(anime_results))
                 self.search_content_layout.addWidget(results_section)  # CORREÇÃO AQUI
                 
                 # Adiciona controles de paginação se houver mais de uma página

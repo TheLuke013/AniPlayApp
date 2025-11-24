@@ -39,7 +39,7 @@ def get_animes_home_page():
 
 def get_anime_info(anime_id):
     try:
-        url = f"http://localhost:4000/api/anime/{anime_id}"
+        url = f"http://localhost:4000/api/v2/hianime/anime/{anime_id}"
         
         response = requests.get(url)
         
