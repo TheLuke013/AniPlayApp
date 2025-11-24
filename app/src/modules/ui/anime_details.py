@@ -3,11 +3,12 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                                QGridLayout, QSizePolicy)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
 import json
 from loguru import logger
 
-from modules.anime.anime_data import get_anime_info, get_anime_episodes, get_anime_episode_servers
+from modules.anime.anime_data import get_anime_episode_streaming_links, get_anime_info, get_anime_episodes, get_anime_episode_servers
 
 def get_anime_structure(anime):
     anime_info = get_anime_info(anime['id'])
@@ -493,6 +494,8 @@ class AnimeDetailsDialog(QDialog):
             logger.error(f"❌ Falha ao obter servidores de episódio")
             self.show_error_message("Erro ao carregar servidores", "Não foi possível carregar os servidores disponíveis para este episódio.")
 
+    # No método start_video_playback do anime_details.py, substitua a parte final:
+
     def start_video_playback(self, selection):
         """Inicia a reprodução do vídeo com a seleção do usuário"""
         server = selection['server']
@@ -509,24 +512,84 @@ class AnimeDetailsDialog(QDialog):
         logger.info(f"   Idioma: {language}")
         logger.info(f"   Servidor: {server_name} (ID: {server_id})")
         
-        # Aqui você implementaria a lógica para:
-        # 1. Buscar o link do vídeo usando server_id e episode_id
-        # 2. Abrir o player de vídeo
-        # 3. Reproduzir o conteúdo
-        
-        # Por enquanto, vamos apenas mostrar as informações
-        from PySide6.QtWidgets import QMessageBox
-        QMessageBox.information(
-            self,
-            "Reproduzir Episódio",
-            f"""Pronto para reproduzir:
-
-    Episódio: {episode_number} - {episode_title}
-    Idioma: {'Legendado' if language == 'sub' else 'Dublado'}
-    Servidor: {server_name}
-
-    A implementação do player de vídeo será adicionada em breve!"""
+        streaming_links = get_anime_episode_streaming_links(
+            episode_data.get('episodeId', ''),
+            server_id,
+            language
         )
+        
+        if streaming_links and "data" in streaming_links:
+            logger.info("✅ Links de streaming obtidos com sucesso!")
+            
+            # Extrai os dados importantes
+            stream_data = streaming_links["data"]
+            
+            # URL do vídeo principal
+            video_url = None
+            if stream_data.get("sources"):
+                video_url = stream_data["sources"][0].get("url")
+            
+            # Legendas disponíveis
+            subtitles = []
+            for track in stream_data.get("tracks", []):
+                if track.get("lang") != "thumbnails":  # Filtra apenas legendas
+                    subtitles.append({
+                        'url': track.get('url'),
+                        'language': track.get('lang')
+                    })
+            
+            # Marcadores de tempo
+            intro = stream_data.get("intro", {})
+            outro = stream_data.get("outro", {})
+            
+            # Headers necessários
+            headers = stream_data.get("headers", {})
+            
+            # Agora você tem todos os dados para o player!
+            self.launch_video_player(
+                video_url=video_url,
+                episode_data=episode_data,
+                subtitles=subtitles,
+                intro=intro,
+                outro=outro,
+                headers=headers,
+                streaming_links=streaming_links  # PASSA O streaming_links COMPLETO
+            )
+            
+        else:
+            logger.error("❌ Falha ao obter links de streaming")
+            self.show_error_message("Erro", "Não foi possível carregar o vídeo.")
+
+    def launch_video_player(self, video_url, episode_data, subtitles, intro, outro, headers, streaming_links=None):
+        """Abre o player de vídeo com todos os dados"""
+        
+        if not video_url:
+            self.show_error_message("Erro", "URL do vídeo não disponível.")
+            return
+        
+        # Prepara os dados para o player
+        video_data = {
+            'video_url': video_url,
+            'episode_data': episode_data,
+            'subtitles': subtitles,
+            'intro': intro,
+            'outro': outro,
+            'headers': headers,
+            'sources': streaming_links["data"].get("sources", []) if streaming_links and "data" in streaming_links else []
+        }
+        
+        try:
+            # Importa e cria o player
+            from modules.ui.video_player import VideoPlayerDialog
+            
+            player_dialog = VideoPlayerDialog(video_data, self)
+            player_dialog.exec()
+            
+            logger.info("✅ Player fechado")
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao abrir player: {e}")
+            self.show_error_message("Erro", f"Não foi possível abrir o player: {str(e)}")
 
     def show_error_message(self, title, message):
         """Mostra uma mensagem de erro"""
