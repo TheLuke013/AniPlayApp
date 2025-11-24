@@ -83,13 +83,11 @@ class AnimeCard(QFrame):
             )
     
     def setup_animations(self):
-        # Animação de escala no hover
         self.scale_animation = QPropertyAnimation(self, b"geometry")
         self.scale_animation.setDuration(200)
         self.scale_animation.setEasingCurve(QEasingCurve.OutCubic)
         
     def enterEvent(self, event: QEnterEvent):
-        """Quando o mouse entra no card"""
         original_rect = self.geometry()
         scaled_rect = QRect(
             original_rect.x() - 5,
@@ -113,7 +111,6 @@ class AnimeCard(QFrame):
         super().enterEvent(event)
     
     def leaveEvent(self, event: QMouseEvent):
-        """Quando o mouse sai do card"""
         original_rect = self.geometry()
         normal_rect = QRect(
             original_rect.x() + 5,
@@ -137,12 +134,10 @@ class AnimeCard(QFrame):
         super().leaveEvent(event)
     
     def mousePressEvent(self, event: QMouseEvent):
-        """Quando clica no card"""
         if event.button() == Qt.LeftButton:
             self.show_anime_details()
         super().mousePressEvent(event)
     
     def show_anime_details(self):
-        """Mostra a janela de detalhes do anime"""
         dialog = AnimeDetailsDialog(self.anime, self.image_loader_callback, self.window())
         dialog.exec()

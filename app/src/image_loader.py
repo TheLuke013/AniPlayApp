@@ -19,7 +19,6 @@ class ImageLoader(QRunnable):
         self.setAutoDelete(True)
 
     def get_cache_path(self):
-        """Retorna o caminho do arquivo baseado no anime_id."""
         extension = Path(self.image_url).suffix.lower()
 
         if extension not in [".jpg", ".jpeg", ".png", ".webp"]:

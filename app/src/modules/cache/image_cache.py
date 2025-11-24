@@ -54,7 +54,6 @@ class ImageCacheManager:
         return None
     
     def clean_corrupted_cache(self):
-        """Remove arquivos de cache corrompidos"""
         try:
             for cache_file in self.cache_dir.glob("*.*"):
                 if cache_file.is_file():
@@ -66,7 +65,6 @@ class ImageCacheManager:
             logger.warning(f"❌ Erro ao limpar cache corrompido: {e}")
     
     def get_cache_size(self):
-        """Retorna o tamanho total do cache em MB"""
         try:
             total_size = 0
             for file_path in self.cache_dir.glob("*.*"):

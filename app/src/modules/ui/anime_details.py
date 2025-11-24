@@ -1,11 +1,12 @@
-# modules/ui/anime_details.py
-
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
                                QPushButton, QScrollArea, QWidget, QFrame)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 
-from modules.anime.anime_data import get_anime_info
+import json
+from loguru import logger
+
+from modules.anime.anime_data import get_anime_info, get_anime_episodes
 
 def get_anime_structure(anime):
     anime_info = get_anime_info(anime['id'])
@@ -32,11 +33,10 @@ class AnimeDetailsDialog(QDialog):
         self.anime = get_anime_structure(anime)
         self.image_loader_callback = image_loader_callback
         
-        # REMOVE OS CONTROLES DE JANELA
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
         
         self.setup_ui()
-        
+           
     def setup_ui(self):
         self.setWindowTitle(f"Detalhes - {self.anime.get('name', 'Anime')}")
         self.setFixedSize(800, 600)
@@ -48,12 +48,10 @@ class AnimeDetailsDialog(QDialog):
             }
         """)
         
-        # Layout principal com SCROLL AREA
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         
-        # Cria a scroll area para a janela inteira
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -320,8 +318,11 @@ class AnimeDetailsDialog(QDialog):
     def watch_anime(self):
         """Abre o player do anime"""
         print(f"Iniciando anime: {self.anime.get('name')}")
-        # Aqui você pode implementar a lógica para abrir o player
-        # Por enquanto só vamos fechar o diálogo
+        
+        anime_episodes = get_anime_episodes(self.anime.get('id'))
+        if anime_episodes and "data" in anime_episodes:
+            logger.info(json.dumps(anime_episodes["data"], indent=4, ensure_ascii=False))
+
         self.accept()
     
     def mousePressEvent(self, event):
