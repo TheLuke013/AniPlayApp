@@ -5,6 +5,11 @@ from PySide6.QtGui import QIcon, QFont
 
 from app import AniPlayApp
 
+import os
+os.environ["QT_MULTIMEDIA_BACKEND"] = "ffmpeg"  # Força usar ffmpeg
+os.environ["QT_OPENGL"] = "software"  # Desativa OpenGL
+os.environ["QMLSCENE_DEVICE"] = "softwarecontext"  # Contexto software
+
 def main():
     myappid = 'thrillerempress.aniplay_app'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

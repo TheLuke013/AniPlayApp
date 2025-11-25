@@ -1,138 +1,113 @@
+# modules/ui/video_player.py
+import os
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-                               QPushButton, QSlider, QWidget, QFrame, 
+                               QPushButton, QSlider, QComboBox, QFrame,
                                QProgressBar, QMessageBox)
-from PySide6.QtCore import Qt, QTimer, QUrl, QTime
+from PySide6.QtCore import Qt, QUrl, QTimer, QTime
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtMultimediaWidgets import QVideoWidget
-from PySide6.QtGui import QIcon, QFont
-import json
+from PySide6.QtGui import QIcon, QPalette, QColor
 from loguru import logger
 
 class VideoPlayerDialog(QDialog):
     def __init__(self, video_data, parent=None):
         super().__init__(parent)
         self.video_data = video_data
-        self.video_url = video_data.get('video_url')
-        self.episode_data = video_data.get('episode_data')
-        self.subtitles = video_data.get('subtitles', [])
-        self.intro = video_data.get('intro', {})
-        self.outro = video_data.get('outro', {})
-        self.headers = video_data.get('headers', {})
-        
-        # Controle de reprodução
+        self.media_player = None
+        self.audio_output = None
         self.is_playing = False
-        self.current_position = 0
-        self.video_duration = 0
+        self.is_fullscreen = False
+        self.current_quality = None
+        self.current_language = 'legendado'  # ou 'dublado'
         
         self.setup_ui()
         self.setup_media_player()
+        self.load_video()
         
     def setup_ui(self):
-        self.setWindowTitle(f"AniPlay - {self.episode_data.get('title', 'Player')}")
-        self.setMinimumSize(1000, 700)
+        self.setWindowTitle("Player de Anime")
+        self.setMinimumSize(800, 500)  # 🔥 Tamanho mais razoável
         self.setStyleSheet("""
             QDialog {
-                background: #1a1a1a;
-                border-radius: 10px;
-            }
-        """)
-        
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-        
-        # Header com informações do episódio
-        header = self.create_header()
-        layout.addWidget(header)
-        
-        # Widget de vídeo
-        self.video_widget = QVideoWidget()
-        self.video_widget.setStyleSheet("""
-            QVideoWidget {
                 background: #000000;
-                border: none;
-            }
-        """)
-        layout.addWidget(self.video_widget)
-        
-        # Controles do player
-        controls = self.create_controls()
-        layout.addWidget(controls)
-        
-        self.setLayout(layout)
-    
-    def create_header(self):
-        header = QWidget()
-        header.setFixedHeight(60)
-        header.setStyleSheet("""
-            QWidget {
-                background: #2a2a2a;
-                border-bottom: 2px solid #ff7b00;
-            }
-        """)
-        
-        layout = QHBoxLayout()
-        layout.setContentsMargins(20, 10, 20, 10)
-        
-        # Informações do episódio
-        episode_info = QLabel(f"{self.episode_data.get('title', 'Episódio')}")
-        episode_info.setStyleSheet("""
-            QLabel {
-                color: #ff7b00;
-                font-size: 16px;
-                font-weight: bold;
-            }
-        """)
-        
-        # Botão fechar
-        close_btn = QPushButton("✕")
-        close_btn.setFixedSize(30, 30)
-        close_btn.setStyleSheet("""
-            QPushButton {
-                background: #ff4444;
                 color: white;
-                border: none;
-                border-radius: 15px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background: #ff6666;
             }
         """)
-        close_btn.clicked.connect(self.close_player)
         
-        layout.addWidget(episode_info)
-        layout.addStretch()
-        layout.addWidget(close_btn)
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         
-        header.setLayout(layout)
-        return header
+        # Widget de vídeo com configurações de performance
+        self.video_widget = QVideoWidget()
+        self.video_widget.setStyleSheet("background: black;")
+        self.video_widget.setAspectRatioMode(Qt.KeepAspectRatio)
+        
+        # 🔥 Otimizações de performance
+        self.video_widget.setAttribute(Qt.WA_OpaquePaintEvent)
+        self.video_widget.setAttribute(Qt.WA_NoSystemBackground)
+        
+        main_layout.addWidget(self.video_widget, 1)  # 🔥 O vídeo ocupa todo o espaço disponível
+        
+        # Controles
+        controls_widget = self.create_controls()
+        main_layout.addWidget(controls_widget)
+        
+        self.setLayout(main_layout)
+
+    def play_stream(self, stream_url):
+        """Reproduz um stream URL com tratamento de erros"""
+        try:
+            logger.info(f"🎬 Carregando stream: {stream_url[:100]}...")
+            
+            # Para qualquer reprodução anterior
+            if self.media_player.playbackState() in [QMediaPlayer.PlayingState, QMediaPlayer.PausedState]:
+                self.media_player.stop()
+            
+            # Limpa estado anterior
+            self.media_player.setSource(QUrl())
+            
+            # Configura a fonte
+            self.media_player.setSource(QUrl(stream_url))
+            
+            # 🔥 Aguarda um pouco antes de reproduzir para estabilizar
+            QTimer.singleShot(100, self.start_playback)
+            
+            logger.info("✅ Stream configurado com sucesso")
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao carregar stream: {e}")
+            self.show_error(f"Erro ao carregar vídeo: {str(e)}")
+
+    def start_playback(self):
+        """Inicia a reprodução após configuração"""
+        try:
+            self.media_player.play()
+            logger.info("🎵 Reprodução iniciada")
+        except Exception as e:
+            logger.error(f"❌ Erro ao iniciar reprodução: {e}")
     
     def create_controls(self):
-        controls = QWidget()
-        controls.setFixedHeight(80)
+        controls = QFrame()
+        controls.setMaximumHeight(80)  # 🔥 Limita a altura dos controles
         controls.setStyleSheet("""
-            QWidget {
-                background: #2a2a2a;
-                border-top: 1px solid #444;
+            QFrame {
+                background: #1a1a1a;
+                padding: 8px;
+                border-top: 1px solid #333;
             }
         """)
         
         layout = QVBoxLayout()
-        layout.setContentsMargins(20, 10, 20, 10)
-        layout.setSpacing(8)
+        layout.setContentsMargins(5, 5, 5, 5)
+        layout.setSpacing(5)
         
         # Barra de progresso
-        progress_layout = QHBoxLayout()
-        
-        self.time_label = QLabel("00:00 / 00:00")
-        self.time_label.setStyleSheet("color: #888; font-size: 12px;")
-        self.time_label.setFixedWidth(100)
-        
         self.progress_slider = QSlider(Qt.Horizontal)
+        self.progress_slider.setMaximumHeight(15)
         self.progress_slider.setStyleSheet("""
             QSlider::groove:horizontal {
-                background: #444;
+                background: #333;
                 height: 4px;
                 border-radius: 2px;
             }
@@ -143,154 +118,210 @@ class VideoPlayerDialog(QDialog):
                 border-radius: 6px;
                 margin: -4px 0;
             }
-            QSlider::handle:horizontal:hover {
-                background: #ff9500;
-                width: 14px;
-                height: 14px;
-                border-radius: 7px;
-            }
             QSlider::sub-page:horizontal {
                 background: #ff7b00;
                 border-radius: 2px;
             }
         """)
         self.progress_slider.sliderMoved.connect(self.seek_video)
-        self.progress_slider.sliderPressed.connect(self.pause_video)
-        self.progress_slider.sliderReleased.connect(self.play_video)
         
-        progress_layout.addWidget(self.time_label)
-        progress_layout.addWidget(self.progress_slider)
+        # Informações de tempo
+        time_layout = QHBoxLayout()
+        time_layout.setContentsMargins(0, 0, 0, 0)
         
-        # Botões de controle
-        buttons_layout = QHBoxLayout()
+        self.current_time_label = QLabel("00:00")
+        self.current_time_label.setStyleSheet("color: #ccc; font-size: 11px;")
+        self.current_time_label.setMaximumHeight(15)
         
-        # Botão play/pause
+        self.total_time_label = QLabel("00:00")
+        self.total_time_label.setStyleSheet("color: #ccc; font-size: 11px;")
+        self.total_time_label.setMaximumHeight(15)
+        
+        time_layout.addWidget(self.current_time_label)
+        time_layout.addStretch()
+        time_layout.addWidget(self.total_time_label)
+        
+        # Controles principais
+        controls_layout = QHBoxLayout()
+        controls_layout.setContentsMargins(0, 0, 0, 0)
+        controls_layout.setSpacing(8)
+        
+        # Botões com ícones menores
         self.play_btn = QPushButton("⏸️")
-        self.play_btn.setFixedSize(50, 40)
+        self.play_btn.setFixedSize(32, 32)
         self.play_btn.setStyleSheet("""
             QPushButton {
-                background: #ff7b00;
-                color: white;
+                background: transparent;
                 border: none;
-                border-radius: 8px;
                 font-size: 16px;
+                border-radius: 3px;
             }
             QPushButton:hover {
-                background: #ff9500;
+                background: #333;
             }
         """)
         self.play_btn.clicked.connect(self.toggle_play_pause)
         
-        # Botão voltar 10s
-        rewind_btn = QPushButton("⏪ 10s")
-        rewind_btn.setFixedSize(80, 40)
-        rewind_btn.setStyleSheet("""
+        self.rewind_btn = QPushButton("⏪")
+        self.rewind_btn.setFixedSize(32, 32)
+        self.rewind_btn.setStyleSheet("""
             QPushButton {
-                background: #3a3a3a;
-                color: white;
+                background: transparent;
                 border: none;
-                border-radius: 8px;
+                font-size: 14px;
+                border-radius: 3px;
             }
             QPushButton:hover {
-                background: #4a4a4a;
+                background: #333;
             }
         """)
-        rewind_btn.clicked.connect(self.rewind_10s)
+        self.rewind_btn.clicked.connect(self.rewind_10s)
+        self.rewind_btn.setToolTip("Voltar 10 segundos")
         
-        # Botão avançar 10s
-        forward_btn = QPushButton("⏩ 10s")
-        forward_btn.setFixedSize(80, 40)
-        forward_btn.setStyleSheet(rewind_btn.styleSheet())
-        forward_btn.clicked.connect(self.forward_10s)
+        self.forward_btn = QPushButton("⏩")
+        self.forward_btn.setFixedSize(32, 32)
+        self.forward_btn.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                font-size: 14px;
+                border-radius: 3px;
+            }
+            QPushButton:hover {
+                background: #333;
+            }
+        """)
+        self.forward_btn.clicked.connect(self.forward_10s)
+        self.forward_btn.setToolTip("Avançar 10 segundos")
         
-        # Botão pular intro/outro
-        self.skip_btn = QPushButton("⏭️ Pular")
-        self.skip_btn.setFixedSize(80, 40)
-        self.skip_btn.setStyleSheet(rewind_btn.styleSheet())
-        self.skip_btn.clicked.connect(self.skip_section)
-        self.skip_btn.hide()  # Inicialmente escondido
+        # Seletor de qualidade mais compacto
+        self.quality_combo = QComboBox()
+        self.quality_combo.setMaximumHeight(28)
+        self.quality_combo.setMaximumWidth(120)
+        self.quality_combo.setStyleSheet("""
+            QComboBox {
+                background: #333;
+                color: white;
+                border: 1px solid #555;
+                padding: 2px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 15px;
+            }
+        """)
+        self.quality_combo.currentTextChanged.connect(self.change_quality)
         
-        # Volume
-        volume_layout = QHBoxLayout()
-        volume_layout.setSpacing(5)
+        # Botão de idioma mais compacto
+        self.language_btn = QPushButton("🇧🇷 Leg")
+        self.language_btn.setMaximumHeight(28)
+        self.language_btn.setStyleSheet("""
+            QPushButton {
+                background: #333;
+                color: white;
+                border: 1px solid #555;
+                padding: 2px 8px;
+                border-radius: 3px;
+                font-size: 11px;
+            }
+            QPushButton:hover {
+                background: #444;
+            }
+        """)
+        self.language_btn.clicked.connect(self.toggle_language)
+        self.language_btn.setToolTip("Alternar entre legendado e dublado")
         
-        volume_icon = QLabel("🔊")
-        volume_icon.setStyleSheet("color: #888;")
+        # Botão tela cheia
+        self.fullscreen_btn = QPushButton("⛶")
+        self.fullscreen_btn.setFixedSize(32, 32)
+        self.fullscreen_btn.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                font-size: 14px;
+                border-radius: 3px;
+            }
+            QPushButton:hover {
+                background: #333;
+            }
+        """)
+        self.fullscreen_btn.clicked.connect(self.toggle_fullscreen)
+        self.fullscreen_btn.setToolTip("Tela cheia (F)")
         
-        self.volume_slider = QSlider(Qt.Horizontal)
-        self.volume_slider.setRange(0, 100)
-        self.volume_slider.setValue(80)
-        self.volume_slider.setFixedWidth(80)
-        self.volume_slider.setStyleSheet(self.progress_slider.styleSheet())
-        self.volume_slider.valueChanged.connect(self.set_volume)
+        # Adiciona os controles
+        controls_layout.addWidget(self.play_btn)
+        controls_layout.addWidget(self.rewind_btn)
+        controls_layout.addWidget(self.forward_btn)
+        controls_layout.addStretch()
+        controls_layout.addWidget(QLabel("Qual:"))
+        controls_layout.addWidget(self.quality_combo)
+        controls_layout.addWidget(self.language_btn)
+        controls_layout.addWidget(self.fullscreen_btn)
         
-        volume_layout.addWidget(volume_icon)
-        volume_layout.addWidget(self.volume_slider)
-        
-        buttons_layout.addWidget(self.play_btn)
-        buttons_layout.addWidget(rewind_btn)
-        buttons_layout.addWidget(forward_btn)
-        buttons_layout.addWidget(self.skip_btn)
-        buttons_layout.addStretch()
-        buttons_layout.addLayout(volume_layout)
-        
-        layout.addLayout(progress_layout)
-        layout.addLayout(buttons_layout)
+        layout.addWidget(self.progress_slider)
+        layout.addLayout(time_layout)
+        layout.addLayout(controls_layout)
         
         controls.setLayout(layout)
         return controls
-    
+
+    # No método setup_media_player do VideoPlayerDialog
     def setup_media_player(self):
-        """Configura o media player"""
-        try:
-            # Cria o player de mídia
-            self.media_player = QMediaPlayer()
-            self.audio_output = QAudioOutput()
-            self.media_player.setAudioOutput(self.audio_output)
-            self.media_player.setVideoOutput(self.video_widget)
-            
-            # Configura a URL do vídeo
-            video_url = QUrl(self.video_url)
-            self.media_player.setSource(video_url)
-            
-            # Conecta os sinais
-            self.media_player.durationChanged.connect(self.on_duration_changed)
-            self.media_player.positionChanged.connect(self.on_position_changed)
-            self.media_player.playbackStateChanged.connect(self.on_playback_state_changed)
-            self.media_player.errorOccurred.connect(self.on_player_error)
-            
-            # Configura volume inicial
-            self.audio_output.setVolume(self.volume_slider.value() / 100)
-            
-            # Timer para verificar seções pular (intro/outro)
-            self.skip_timer = QTimer()
-            self.skip_timer.timeout.connect(self.check_skip_sections)
-            self.skip_timer.start(1000)  # Verifica a cada segundo
-            
-            logger.info("✅ Player de mídia configurado com sucesso")
-            
-        except Exception as e:
-            logger.error(f"❌ Erro ao configurar player: {e}")
-            self.show_error("Erro ao configurar o player de vídeo")
+        """Configura o player de mídia"""
+        self.media_player = QMediaPlayer()
+        self.audio_output = QAudioOutput()
+        self.media_player.setAudioOutput(self.audio_output)
+        self.media_player.setVideoOutput(self.video_widget)
+        
+        # 🔥 CRÍTICO: Desativa aceleração de hardware para evitar congelamentos
+        # Isso resolve os erros D3D11 e de textura
+        self.media_player.setProperty("videoOutput", "software")
+        
+        # Conecta sinais
+        self.media_player.positionChanged.connect(self.position_changed)
+        self.media_player.durationChanged.connect(self.duration_changed)
+        self.media_player.playbackStateChanged.connect(self.playback_state_changed)
+        self.media_player.errorOccurred.connect(self.handle_player_error)
+
+    def load_video(self):
+        """Carrega o vídeo baseado nos dados fornecidos"""
+        streaming_links = self.video_data.get('streaming_links', {})
+        
+        if not streaming_links:
+            self.show_error("Nenhum link de streaming disponível")
+            return
+        
+        # Preenche o seletor de qualidade
+        self.quality_combo.clear()
+        for quality in streaming_links.keys():
+            self.quality_combo.addItem(quality)
+        
+        # Tenta carregar a melhor qualidade primeiro
+        preferred_qualities = ['1080p', '720p', '480p', '360p', 'auto', 'direct']
+        for quality in preferred_qualities:
+            if quality in streaming_links:
+                self.current_quality = quality
+                self.quality_combo.setCurrentText(quality)
+                self.play_stream(streaming_links[quality])
+                break
+        
+        if not self.current_quality:
+            # Usa o primeiro link disponível
+            first_quality = list(streaming_links.keys())[0]
+            self.current_quality = first_quality
+            self.quality_combo.setCurrentText(first_quality)
+            self.play_stream(streaming_links[first_quality])
     
     def toggle_play_pause(self):
         """Alterna entre play e pause"""
         if self.media_player.playbackState() == QMediaPlayer.PlayingState:
-            self.pause_video()
+            self.media_player.pause()
+            self.play_btn.setText("▶️")
         else:
-            self.play_video()
-    
-    def play_video(self):
-        """Inicia a reprodução"""
-        self.media_player.play()
-        self.play_btn.setText("⏸️")
-        self.is_playing = True
-    
-    def pause_video(self):
-        """Pausa a reprodução"""
-        self.media_player.pause()
-        self.play_btn.setText("▶️")
-        self.is_playing = False
+            self.media_player.play()
+            self.play_btn.setText("⏸️")
     
     def rewind_10s(self):
         """Volta 10 segundos"""
@@ -307,71 +338,83 @@ class VideoPlayerDialog(QDialog):
         """Busca uma posição específica no vídeo"""
         self.media_player.setPosition(position)
     
-    def set_volume(self, value):
-        """Define o volume"""
-        self.audio_output.setVolume(value / 100)
+    def change_quality(self, quality):
+        """Muda a qualidade do vídeo"""
+        if quality != self.current_quality:
+            streaming_links = self.video_data.get('streaming_links', {})
+            if quality in streaming_links:
+                self.current_quality = quality
+                current_position = self.media_player.position()
+                self.play_stream(streaming_links[quality])
+                # Restaura a posição após carregar o novo stream
+                QTimer.singleShot(1000, lambda: self.media_player.setPosition(current_position))
     
-    def skip_section(self):
-        """Pula a seção atual (intro/outro)"""
-        current_pos = self.media_player.position() / 1000  # Converter para segundos
-        
-        # Verifica se está na intro
-        intro_start = self.intro.get('start', 0)
-        intro_end = self.intro.get('end', 0)
-        if intro_start <= current_pos <= intro_end and intro_end > 0:
-            self.media_player.setPosition(intro_end * 1000)
-            return
-        
-        # Verifica se está no outro
-        outro_start = self.outro.get('start', 0)
-        outro_end = self.outro.get('end', 0)
-        if outro_start <= current_pos <= outro_end and outro_end > 0:
-            self.media_player.setPosition(outro_end * 1000)
-            return
+    def toggle_language(self):
+        """Alterna entre legendado e dublado"""
+        if self.current_language == 'legendado':
+            self.current_language = 'dublado'
+            self.language_btn.setText("🇧🇷 Dublado")
+            # Aqui você implementaria a lógica para trocar o áudio
+        else:
+            self.current_language = 'legendado'
+            self.language_btn.setText("🇧🇷 Legendado")
+            # Aqui você implementaria a lógica para trocar o áudio
     
-    def check_skip_sections(self):
-        """Verifica se deve mostrar o botão de pular"""
-        if not self.is_playing:
-            return
+    def toggle_fullscreen(self):
+        """Alterna entre tela cheia e normal"""
+        if self.is_fullscreen:
+            self.showNormal()
+            self.fullscreen_btn.setText("⛶")
+        else:
+            self.showFullScreen()
+            self.fullscreen_btn.setText("⛷")
+        self.is_fullscreen = not self.is_fullscreen
+    
+    def position_changed(self, position):
+        """Atualiza a barra de progresso quando a posição muda"""
+        try:
+            # Evita atualizações muito frequentes
+            if not self.progress_slider.isSliderDown():
+                self.progress_slider.setValue(position)
             
-        current_pos = self.media_player.position() / 1000  # Converter para segundos
-        
-        # Verifica intro
-        intro_start = self.intro.get('start', 0)
-        intro_end = self.intro.get('end', 0)
-        if intro_start <= current_pos <= intro_end and intro_end > 0:
-            self.skip_btn.setText("⏭️ Pular Intro")
-            self.skip_btn.show()
-            return
-        
-        # Verifica outro
-        outro_start = self.outro.get('start', 0)
-        outro_end = self.outro.get('end', 0)
-        if outro_start <= current_pos <= outro_end and outro_end > 0:
-            self.skip_btn.setText("⏭️ Pular Outro")
-            self.skip_btn.show()
-            return
-        
-        self.skip_btn.hide()
+            # Atualiza o tempo atual
+            current_time = QTime(0, 0, 0, 0)
+            current_time = current_time.addMSecs(position)
+            self.current_time_label.setText(current_time.toString("mm:ss"))
+        except Exception as e:
+            logger.debug(f"Erro em position_changed: {e}")
+
+    def duration_changed(self, duration):
+        """Atualiza a duração total do vídeo"""
+        try:
+            if duration > 0:
+                self.progress_slider.setRange(0, duration)
+                
+                total_time = QTime(0, 0, 0, 0)
+                total_time = total_time.addMSecs(duration)
+                self.total_time_label.setText(total_time.toString("mm:ss"))
+        except Exception as e:
+            logger.debug(f"Erro em duration_changed: {e}")
+
+    def seek_video(self, position):
+        """Busca uma posição específica no vídeo"""
+        try:
+            # Só busca se o vídeo estiver carregado
+            if self.media_player.duration() > 0:
+                self.media_player.setPosition(position)
+        except Exception as e:
+            logger.debug(f"Erro em seek_video: {e}")
     
-    def on_duration_changed(self, duration):
-        """Quando a duração do vídeo é carregada"""
-        self.video_duration = duration
+    def duration_changed(self, duration):
+        """Atualiza a duração total do vídeo"""
         self.progress_slider.setRange(0, duration)
-        self.update_time_label()
-    
-    def on_position_changed(self, position):
-        """Quando a posição do vídeo muda"""
-        self.current_position = position
-        self.progress_slider.setValue(position)
-        self.update_time_label()
         
-        # Salva o progresso a cada 10 segundos
-        if position % 10000 < 100:  # Aproximadamente a cada 10s
-            self.save_watch_progress()
+        total_time = QTime(0, 0, 0, 0)
+        total_time = total_time.addMSecs(duration)
+        self.total_time_label.setText(total_time.toString("mm:ss"))
     
-    def on_playback_state_changed(self, state):
-        """Quando o estado de reprodução muda"""
+    def playback_state_changed(self, state):
+        """Atualiza o estado de reprodução"""
         if state == QMediaPlayer.PlayingState:
             self.play_btn.setText("⏸️")
             self.is_playing = True
@@ -379,50 +422,50 @@ class VideoPlayerDialog(QDialog):
             self.play_btn.setText("▶️")
             self.is_playing = False
     
-    def update_time_label(self):
-        """Atualiza o label de tempo"""
-        current_time = QTime(0, 0).addMSecs(self.current_position)
-        total_time = QTime(0, 0).addMSecs(self.video_duration)
-        
-        current_str = current_time.toString("mm:ss")
-        total_str = total_time.toString("mm:ss")
-        
-        self.time_label.setText(f"{current_str} / {total_str}")
-    
-    def save_watch_progress(self):
-        """Salva o progresso de assistir"""
-        try:
-            progress_data = {
-                'episode_id': self.episode_data.get('episodeId'),
-                'episode_number': self.episode_data.get('number'),
-                'anime_id': self.episode_data.get('anime_id', self.video_data.get('anilistID')),
-                'position': self.current_position,
-                'duration': self.video_duration,
-                'timestamp': QTime.currentTime().toString("hh:mm:ss")
-            }
+    def handle_player_error(self, error, error_string):
+        """Lida com erros do player de forma mais específica"""
+        # 🔥 Ignora erros menores ou repetidos
+        if "smoke test" in error_string.lower() or "texture" in error_string.lower():
+            logger.debug(f"⚠️ Erro gráfico ignorado: {error_string}")
+            return
             
-            # Aqui você pode salvar no banco de dados do usuário
-            logger.info(f"💾 Progresso salvo: {self.current_position}/{self.video_duration}")
-            
-        except Exception as e:
-            logger.error(f"❌ Erro ao salvar progresso: {e}")
-    
-    def on_player_error(self, error, error_string):
-        """Trata erros do player"""
-        logger.error(f"❌ Erro no player: {error_string}")
-        self.show_error(f"Erro na reprodução: {error_string}")
+        error_messages = {
+            QMediaPlayer.NoError: "Sem erro",
+            QMediaPlayer.ResourceError: "Erro de recurso - possível problema de codec",
+            QMediaPlayer.FormatError: "Erro de formato - arquivo corrompido ou incompatível", 
+            QMediaPlayer.NetworkError: "Erro de rede - problema de conexão",
+            QMediaPlayer.AccessDeniedError: "Acesso negado - permissões ou CORS"
+        }
+        
+        error_msg = error_messages.get(error, f"Erro desconhecido: {error}")
+        logger.error(f"❌ Erro no player ({error}): {error_msg} - {error_string}")
+        
+        # Só mostra dialog para erros críticos
+        if error not in [QMediaPlayer.NoError]:
+            self.show_error(f"Erro na reprodução: {error_msg}")
     
     def show_error(self, message):
         """Mostra mensagem de erro"""
-        QMessageBox.critical(self, "Erro no Player", message)
+        QMessageBox.warning(self, "Erro no Player", message)
     
-    def close_player(self):
-        """Fecha o player e salva o progresso final"""
-        self.save_watch_progress()
-        self.media_player.stop()
-        self.accept()
-    
-    def closeEvent(self, event):
-        """Quando o player é fechado"""
-        self.close_player()
-        event.accept()
+    def resizeEvent(self, event):
+        """Redimensiona o overlay de loading quando a janela muda de tamanho"""
+        super().resizeEvent(event)
+        # Mantém o loading overlay do tamanho do video widget
+        if hasattr(self, 'loading_overlay'):
+            self.loading_overlay.setGeometry(self.video_widget.rect())
+
+    def keyPressEvent(self, event):
+        """Handle keyboard shortcuts"""
+        if event.key() == Qt.Key_Space:
+            self.toggle_play_pause()
+        elif event.key() == Qt.Key_Left:
+            self.rewind_10s()
+        elif event.key() == Qt.Key_Right:
+            self.forward_10s()
+        elif event.key() == Qt.Key_F:
+            self.toggle_fullscreen()
+        elif event.key() == Qt.Key_Escape and self.is_fullscreen:
+            self.toggle_fullscreen()
+        else:
+            super().keyPressEvent(event)
