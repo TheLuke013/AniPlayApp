@@ -9,6 +9,15 @@ import os
 os.environ["QT_MULTIMEDIA_BACKEND"] = "ffmpeg"  # Força usar ffmpeg
 os.environ["QT_OPENGL"] = "software"  # Desativa OpenGL
 os.environ["QMLSCENE_DEVICE"] = "softwarecontext"  # Contexto software
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = (
+    "--disable-gpu "
+    "--disable-software-rasterizer "
+    "--disable-webgl "
+    "--disable-gpu-compositing "
+    "--disable-gpu-rasterization "
+    "--use-angle=swiftshader"
+)
+
 
 def main():
     myappid = 'thrillerempress.aniplay_app'

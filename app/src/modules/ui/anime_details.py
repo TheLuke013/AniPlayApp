@@ -7,28 +7,66 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 
 import json
 from loguru import logger
+import re
+import requests
 
-from modules.anime.anime_data import get_anime_info, get_anime_episodes
+from modules.anime.anime_data import get_anime_info, get_anime_episodes, get_anime_by_id, get_anime_with_fallback
 from modules.anime.animefire_downloader import AnimeFireDownloader
 
 def get_anime_structure(anime):
     anime_info = get_anime_info(anime['id'])
+    
+    if not anime_info:
+        logger.error(f"❌ Não foi possível obter informações do anime {anime['id']}")
+        return None
+        
     more_info = anime_info["data"]["anime"]["moreInfo"]
-    anime = anime_info["data"]["anime"]["info"]
-
-    return {
-        "name": anime.get("name", "Sem título"),
-        "status": more_info.get("status", "N/A"),
-        "episodes": anime["stats"]["episodes"]["sub"] if "episodes" in anime["stats"] else "?",
-        "poster": anime.get("poster", ""),
-        "id": anime.get("id", ""),
-        "type": anime["stats"].get("type", "N/A"),
-        "description": anime.get("description", "Descrição não disponível."),
-        "genres": more_info.get("genres", []),
-        "studio": more_info.get("studios", "N/A"),
-        "duration": more_info.get("duration", "N/A"),
-        "year": more_info.get("aired", "N/A")
-    }
+    anime_data = anime_info["data"]["anime"]["info"]
+    
+    # Tenta obter dados do AniList com fallback
+    anilist_id = anime_data.get("anilistId", 0)
+    anime_name = anime_data.get("name", "")
+    
+    anilist_data = get_anime_with_fallback(anilist_id, anime_name)
+    
+    # Se conseguiu dados do AniList, usa informações mais precisas
+    if anilist_data and anilist_data.get('data', {}).get('Media'):
+        media = anilist_data['data']['Media']
+        title_data = media.get('title', {})
+        
+        return {
+            "name": title_data.get('romaji') or title_data.get('english') or anime_name,
+            "anilistId": media.get('id', anilist_id),
+            "status": more_info.get("status", "N/A"),
+            "episodes": anime_data["stats"]["episodes"]["sub"] if "episodes" in anime_data["stats"] else "?",
+            "poster": anime_data.get("poster", ""),
+            "id": anime_data.get("id", ""),
+            "type": anime_data["stats"].get("type", "N/A"),
+            "description": anime_data.get("description", "Descrição não disponível."),
+            "genres": more_info.get("genres", []),
+            "studio": more_info.get("studios", "N/A"),
+            "duration": more_info.get("duration", "N/A"),
+            "year": more_info.get("aired", "N/A"),
+            "original_name": anime_name  # Guarda o nome original para fallback
+        }
+    else:
+        # Fallback para dados básicos
+        logger.warning(f"⚠️ Usando dados básicos para {anime_name} (AniList não disponível)")
+        return {
+            "name": anime_name,
+            "anilistId": anilist_id,
+            "status": more_info.get("status", "N/A"),
+            "episodes": anime_data["stats"]["episodes"]["sub"] if "episodes" in anime_data["stats"] else "?",
+            "poster": anime_data.get("poster", ""),
+            "id": anime_data.get("id", ""),
+            "type": anime_data["stats"].get("type", "N/A"),
+            "description": anime_data.get("description", "Descrição não disponível."),
+            "genres": more_info.get("genres", []),
+            "studio": more_info.get("studios", "N/A"),
+            "duration": more_info.get("duration", "N/A"),
+            "year": more_info.get("aired", "N/A"),
+            "original_name": anime_name
+        }
 
 class EpisodeButton(QPushButton):
     def __init__(self, episode_data, parent=None):
@@ -510,19 +548,95 @@ class AnimeDetailsDialog(QDialog):
             import traceback
             logger.error(f"📝 Stack trace: {traceback.format_exc()}")
             self.show_error_message("Erro", f"Não foi possível abrir o player: {str(e)}")
-
+    
     def get_anime_episode_link(self, episode_data, dub=False):
-        """Obtém o link do episódio para download"""
-
+        """Obtém o link do episódio para download - VERSÃO MELHORADA"""
+        
         episode_number = episode_data.get('number', 0)
-        anime_name = self.anime.get('name', '').lower().replace(' ', '-')
-        name = self.downloader.sanitizar_nome_anime(anime_name) 
+        anilist_id = self.anime.get('anilistId', 0)
+        anime_name = self.anime.get('original_name') or self.anime.get('name', '')
+        
+        logger.info(f"🔍 Obtendo link para: {anime_name}, Episódio: {episode_number}, Dublado: {dub}")
+        
+        # Se temos um AniList ID válido, tenta usar
+        if anilist_id and anilist_id != 0:
+            try:
+                ani_data = get_anime_by_id(anilist_id)
+                
+                if ani_data and ani_data.get("data", {}).get("Media"):
+                    media = ani_data["data"]["Media"]
+                    title_data = media.get("title", {})
+                    
+                    # Usar título romaji ou inglês
+                    romaji_title = title_data.get("romaji", "")
+                    english_title = title_data.get("english", "")
+                    
+                    if romaji_title:
+                        name = romaji_title
+                    elif english_title:
+                        name = english_title
+                    else:
+                        name = anime_name
+                    
+                    # Converter para formato de URL
+                    name = self.format_anime_name_for_url(name)
+                    
+                    url = self.build_animefire_url(name, episode_number, dub)
+                    logger.info(f"🔗 Link gerado via AniList: {url}")
+                    return url
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ Erro ao usar AniList ID {anilist_id}: {e}")
+        
+        # Fallback: usar nome do anime diretamente
+        logger.info("🔄 Usando fallback com nome do anime")
+        name = self.format_anime_name_for_url(anime_name)
+        url = self.build_animefire_url(name, episode_number, dub)
+        logger.info(f"🔗 Link fallback: {url}")
+        return url
 
+    def format_anime_name_for_url(self, name):
+        """Formata o nome do anime para URL"""
+        if not name:
+            return ""
+        
+        # Converter para minúsculas
+        name = name.lower()
+        
+        # Substituir caracteres especiais
+        name = name.replace(':', '-')
+        name = name.replace(' ', '-')
+        name = re.sub(r'[^\w\-]', '', name)
+        
+        # Sanitizar nome final
+        name = self.downloader.sanitizar_nome_anime(name)
+        
+        return name
+
+    def build_animefire_url(self, name, episode_number, dub):
+        """Constrói a URL do AnimeFire"""
         if dub:
             return f"https://animefire.plus/animes/{name}-dublado/{episode_number}"
         else:
             return f"https://animefire.plus/animes/{name}/{episode_number}"
 
+    def _get_fallback_url(self, episode_number, dub):
+        """Método fallback quando a API do AniList falha"""
+        anime_name = self.anime.get('id', '').lower().replace(' ', '-')
+        name_sanitized = self.downloader.sanitizar_nome_anime(anime_name)
+        
+        # Remover números no final (se houver)
+        name = re.sub(r'-\d+$', '', name_sanitized)
+        name = name.rstrip('-')
+        
+        if dub:
+            url = f"https://animefire.plus/animes/{name}-dublado/{episode_number}"
+        else:
+            url = f"https://animefire.plus/animes/{name}/{episode_number}"
+        
+        logger.warning(f"⚠️ Usando URL fallback: {url}")
+        return url
+    
     def start_video_playback(self, selection):
         """Inicia a reprodução do vídeo com a seleção do usuário"""
         server = selection['server']
